@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href='/static/css/fullcalendar.css' rel='stylesheet'/>
-    <link href='/static/css/fullcalendar.print.css' rel='stylesheet' media='print'/>
-
-    <script src='/static/jquery/jquery-1.10.2.js'></script>
-    <script src='/static/jquery/jquery-ui.custom.min.js'></script>
-
-    <script src='/static/js/fullcalendar.js'></script>
+    {#    <link href='/static/css/fullcalendar.css' rel='stylesheet'/>#}
+    {#    <link href='/static/css/fullcalendar.print.css' rel='stylesheet' media='print'/>#}
+    {##}
+    {#    <script src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.0.js'></script>#}
+    {#    <script src='/static/jquery/jquery-ui.min.js'></script>#}
+    {##}
+    {#    <script src='/static/js/fullcalendar.js'></script>#}
+    <meta charset='utf-8'/>
+    <link href='/static/css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <script src='/static/jquery//moment.min.js'></script>
+    <script src='/static/jquery//jquery.min.js'></script>
+    <script src='/static/js/fullcalendar.min.js'></script>
+    <!-- 引入 Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+    <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+    <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <![endif]-->
     <script>
-
         $(document).ready(function () {
-            var date = new Date();
-            var d = date.getDate();
-            var m = date.getMonth();
-            var y = date.getFullYear();
-
             /*  className colors
 
             className: default(transparent), important(red), chill(pink), success(green), info(blue)
@@ -56,96 +65,86 @@
                     center: 'title',
                     right: 'today'
                 },
-                defaultDate: '2016-08-20',
                 lang: 'zh-cn',
-                buttonIcons: false, // show the prev/next text
-                weekMode: 'liquid',
-                events: function (start, end, callback) {
-                    {#var date = this.getDate().format('YYYY-MM');#}
+                timezone: "local",
+                {#editable: true,#}
+                eventLimit: true, // allow "more" link when too many events
+                selectable: true,
+                select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
+                    console.log("↓↓↓select↓↓↓");
+                    console.log("start:" + start + "|end:" + end + "|jsEvent:" + jsEvent + "|view:" + view.title);
+                    var title = prompt('Event Title:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end: end
+                        };
+                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                    $('#calendar').fullCalendar('unselect');
+                },
+                events: function (start, end, timezone, callback) {
+                    var date = new Date(this.getDate())
                     $.ajax({
                         url: '/api/schedule/list_by_date/',
                         type: "GET",
                         dataType: 'json',
                         data: {
                             team_id: 100,
-                            year: y,
-                            month: m+1
+                            year: date.getFullYear(),
+                            month: date.getMonth() + 1
                         },
                         success: function (data) { // 获取当前月的数据
                             var events = [];
                             $.each(data, function (index, value) {
-                                {#alert(value.shift_name)#}
-                                {#alert(value.person_name)#}
-                                {#alert(value.date)#}
                                 events.push({
-                                    id: 999,
+                                    scheduleobj: value,
                                     title: value.person_name + ',' + value.shift_name,
-                                    start: value.date,
-                                    color: '#FFEBAC'
+                                    start: value.date
                                 });
                             });
                             callback(events);
                         }
                     });
+                },
+                eventClick: function (event, element) {
+                    {#event.title = prompt('update Title:');#}
+                    $("#myModalLabel").text("更新");
+                    $("#txt_personname").val(event.scheduleobj.person_name);
+                    $("#txt_shiftname").val(event.scheduleobj.shift_name);
+                    if (event.scheduleobj.is_master == true) {
+                        $('input[value="true"]').prop('checked', true).trigger('change')
+                    } else {
+                        $('input[value="false"]').prop('checked', true).trigger('change')
+                    }
+                    
+                    $('#myModal').modal();
+                    $("input[name='ismaster']:checked").val();
+                    event.title = event.scheduleobj.person_name + ',' + event.scheduleobj.shift_name;
+                    //更新日程对象信息
+                    $('#calendar').fullCalendar('updateEvent', event);
                 }
+            });
+            $("#btn_delete").click(function () {
+                var arrselections = $("#tb_departments").bootstrapTable('getSelections');
+
             });
         })
     </script>
     <style>
 
         body {
-            margin-top: 40px;
-            text-align: center;
+            margin: 40px 10px;
+            padding: 0;
+            font-family: "Lucida Grande", Helvetica, Arial, Verdana, sans-serif;
             font-size: 14px;
-            font-family: "Helvetica Nueue", Arial, Verdana, sans-serif;
-            background-color: #DDDDDD;
-        }
-
-        #wrap {
-            width: 1100px;
-            margin: 0 auto;
-        }
-
-        #external-events {
-            float: left;
-            width: 150px;
-            padding: 0 10px;
-            text-align: left;
-        }
-
-        #external-events h4 {
-            font-size: 16px;
-            margin-top: 0;
-            padding-top: 1em;
-        }
-
-        .external-event { /* try to mimick the look of a real event */
-            margin: 10px 0;
-            padding: 2px 4px;
-            background: #3366CC;
-            color: #fff;
-            font-size: .85em;
-            cursor: pointer;
-        }
-
-        #external-events p {
-            margin: 1.5em 0;
-            font-size: 11px;
-            color: #666;
-        }
-
-        #external-events p input {
-            margin: 0;
-            vertical-align: middle;
         }
 
         #calendar {
-            /* 		float: right; */
+            max-width: 900px;
             margin: 0 auto;
-            width: 900px;
-            background-color: #FFFFFF;
-            border-radius: 6px;
-            box-shadow: 0 1px 2px #C3C3C3;
         }
 
     </style>
@@ -156,6 +155,46 @@
     <div id='calendar'></div>
 
     <div style='clear:both'></div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myModalLabel">新增</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="txt_personname">值班人姓名</label>
+                    <input type="text" name="txt_personname" class="form-control" id="txt_personname"
+                           placeholder="值班人姓名">
+                </div>
+                <div class="form-group">
+                    <label for="txt_shiftname">班次</label>
+                    <input type="text" name="txt_shiftname" class="form-control" id="txt_shiftname"
+                           placeholder="班次">
+                </div>
+                <div class="form-group">
+                    <label for="txt_ismaster">是否为主值班人</label>
+                    <br>
+                    <input type="radio" name="ismaster" value="true" checked>是
+                    <br>
+                    <input type="radio" name="ismaster" value="false">否
+                    <input type="hidden" id="scheduleobj">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                </button>
+                <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
