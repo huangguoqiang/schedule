@@ -30,7 +30,7 @@
             className: default(transparent), important(red), chill(pink), success(green), info(blue)
 
             */
-
+            var scheduleobj = ''
 
             /* initialize the external events
             -----------------------------------------------------------------*/
@@ -110,26 +110,115 @@
                     });
                 },
                 eventClick: function (event, element) {
-                    {#event.title = prompt('update Title:');#}
-                    $("#myModalLabel").text("更新");
-                    $("#txt_personname").val(event.scheduleobj.person_name);
-                    $("#txt_shiftname").val(event.scheduleobj.shift_name);
-                    if (event.scheduleobj.is_master == true) {
-                        $('input[value="true"]').prop('checked', true).trigger('change')
-                    } else {
-                        $('input[value="false"]').prop('checked', true).trigger('change')
-                    }
-                    
-                    $('#myModal').modal();
-                    $("input[name='ismaster']:checked").val();
-                    event.title = event.scheduleobj.person_name + ',' + event.scheduleobj.shift_name;
-                    //更新日程对象信息
-                    $('#calendar').fullCalendar('updateEvent', event);
+                    alert(event.scheduleobj.person_id)
+                    $.ajax({
+                        url: '/api/person/',
+                        type: "GET",
+                        dataType: 'json',
+                        data: {
+                            id: event.scheduleobj.person_id,
+                        },
+                        success: function (result) {
+                            if (result.length == 0) {
+                                alert("值班人信息有误，请重试")
+                            } else {
+                                $("#txt_detailname").val(result[0].name);
+                                $("#txt_telnum").val(result[0].tel_num);
+                                $("#txt_email").val(result[0].email);
+                                if (event.scheduleobj.is_master == true) {
+                                    $('input[value="yes"]').prop('checked', true).trigger('change')
+                                } else {
+                                    $('input[value="no"]').prop('checked', true).trigger('change')
+                                }
+                                scheduleobj = event.scheduleobj;
+                                $('#detail').modal();
+                                $('#myModal').on('hide.bs.modal', function () {
+                                    // 执行一些动作...
+                                    event.title = $("#txt_personname").val() + ',' + $("#txt_shiftname").val();
+                                    //更新日程对象信息
+                                    $('#calendar').fullCalendar('updateEvent', event);
+                                })
+                            }
+                        }
+                    });
                 }
             });
-            $("#btn_delete").click(function () {
-                var arrselections = $("#tb_departments").bootstrapTable('getSelections');
+            //$("#txt_personname").on("input", function (evt) {
+            //   if ($(this).val().trim().length) {
+            //    $("#btn_submit").removeAttr("disabled");
+            // } else {
+            //  alert("值班人姓名不能为空，请重新输入");
+            // $("#btn_submit").prop("disabled", "disabled");
+            //}
 
+            //});
+            $("#btn_submit").click(function () {
+                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
+                if (scheduleobj.person_name != $("#txt_personname").val() ||
+                    scheduleobj.shift_name != $("#txt_shiftname").val() ||
+                    scheduleobj.is_master != ismaster) {
+                    $.ajax({
+                        url: '/api/person/',
+                        type: "GET",
+                        dataType: 'json',
+                        data: {
+                            name: $("#txt_personname").val(),
+                        },
+                        success: function (result) {
+                            if (result.length == 0) {
+                                alert("值班人不存在，请重新输入")
+                                $('#myModal').modal("show");
+                            } else {
+                                $.ajax({
+                                    url: '/api/schedule/' + scheduleobj.id + '/',
+                                    type: "put",
+                                    dataType: 'json',
+                                    data: {
+                                        team_id: scheduleobj.team_id,
+                                        date: scheduleobj.date,
+                                        person_id: result[0].id,
+                                        person_name: result[0].name,
+                                        shift_id: 10,
+                                        shift_name: $("#txt_shiftname").val(),
+                                        is_master: ismaster
+                                    },
+                                    success: function (result) {
+                                        if (result) {
+                                            alert("更新成功");
+                                        } else {
+                                            alert("更新失败，请重试");
+                                            $('#myModal').modal("show");
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+                }
+            });
+            $("#btn_detaildel").click(function () {
+                $.ajax({
+                    url: '/api/schedule/' + scheduleobj.id,
+                    type: "delete",
+                    dataType: 'json',
+                    data: {},
+                    success: function (result) {
+                        alert("删除成功");
+                        window.location.reload();
+                    }
+                });
+            });
+            $("#btn_detailmodify").click(function () {
+                $("#myModalLabel").text("更新");
+                $("#txt_personname").val(scheduleobj.person_name);
+                $("#txt_shiftname").val(scheduleobj.shift_name);
+                if (scheduleobj.is_master == true) {
+                    $('input[value="true"]').prop('checked', true).trigger('change')
+                } else {
+                    $('input[value="false"]').prop('checked', true).trigger('change')
+                }
+                $('#myModal').modal();
             });
         })
     </script>
@@ -182,7 +271,6 @@
                     <input type="radio" name="ismaster" value="true" checked>是
                     <br>
                     <input type="radio" name="ismaster" value="false">否
-                    <input type="hidden" id="scheduleobj">
                 </div>
             </div>
             <div class="modal-footer">
@@ -190,7 +278,54 @@
                         class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
                 </button>
                 <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
-                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>保存
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="myDetailLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myDetailLabel">值班人信息</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="txt_detailname">值班人姓名</label>
+                    <input type="text" name="txt_detailname" class="form-control" id="txt_detailname"
+                           placeholder="值班人姓名" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="txt_telnum">联系电话</label>
+                    <input type="text" name="txt_telnum" class="form-control" id="txt_telnum"
+                           placeholder="联系电话" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="txt_email">邮箱</label>
+                    <input type="text" name="txt_email" class="form-control" id="txt_email"
+                           placeholder="邮箱" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="txt_ismaster">是否为主值班人</label>
+                    <br>
+                    <input type="radio" name="ismaster" value="yes" checked>是
+                    <br>
+                    <input type="radio" name="ismaster" value="no">否
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                </button>
+                <button type="button" id="btn_detaildel" class="btn btn-primary" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>删除排班
+                </button>
+                <button type="button" id="btn_detailmodify" class="btn btn-primary" data-dismiss="modal"><span
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>更改值班人
                 </button>
             </div>
         </div>
