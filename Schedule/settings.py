@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'mysite',
     'rest_framework',
     'django_filters',
+    'test',
 ]
 
 MIDDLEWARE = [

@@ -1,35 +1,59 @@
 import calendar
 import datetime
 import time
+import json
 from django.core import serializers
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
+from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from rest_framework import viewsets,filters
-from rest_framework.decorators import detail_route, list_route
+from rest_framework import viewsets
+from rest_framework.decorators import list_route
 from mysite.serializers import *
+
+
 # Create your views here.
 
 
 def index(request):
-    return render(request, 'fullcalendar.html')
+    return render(request, 'calendar.html')
+
+
+def calendar(request):
+    return render(request, 'newcalendar.html')
+
+
+def shift(request):
+    return render(request, 'shift.html')
+
+
+def users(request):
+    return render(request, 'users.html')
+
+
+def team(request):
+    return render(request, 'team.html')
+
+
+def get_health(request):
+    return HttpResponse(json.dumps({'status': 'UP'}))
+
 
 # schedule view
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('team_id', 'person_id', 'date')
+    filter_fields = ('id', 'team_id', 'person_id', 'date')
 
     @list_route()
     def list_by_date(self, request):
         y = int(request.GET['year'])
-        print(y)
         m = int(request.GET['month'])
-        print(m)
+        mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         date_from = datetime.datetime(y, m, 1, 0, 0)
-        date_to = datetime.datetime(y, m, calendar.mdays[m], 0, 0)
+        date_to = datetime.datetime(y, m, mdays[m], 0, 0)
         queryset = self.filter_queryset(self.get_queryset().filter(date__range=(date_from, date_to)))
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -63,74 +87,25 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+
+@csrf_exempt
 def generate(request):
-    mist = [{'team_id': 100, 'date': '2018-03-20', 'person_id': 100, 'person_name': '黄国强', 'shift_id': 10,
-             'shift_name':'白班','is_master': True},
-            {'team_id': 100, 'date': '2018-03-20', 'person_id': 101, 'person_name': '齐星', 'shift_id': 10,
-             'shift_name':'白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-20', 'person_id': 102, 'person_name': '薛超', 'shift_id': 11,
-             'shift_name':'夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-20', 'person_id': 103, 'person_name': '薛超2', 'shift_id': 11,
-             'shift_name':'白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-21', 'person_id': 104, 'person_name': '黄国强2', 'shift_id': 10,
-             'shift_name':'白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-21', 'person_id': 105, 'person_name': '齐星2', 'shift_id': 10,
-             'shift_name':'白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-21', 'person_id': 106, 'person_name': '薛超1', 'shift_id': 11,
-             'shift_name':'夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-21', 'person_id': 107, 'person_name': '薛超3', 'shift_id': 11,
-             'shift_name':'夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-22', 'person_id': 100, 'person_name': '黄国强', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-22', 'person_id': 101, 'person_name': '齐星', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-22', 'person_id': 102, 'person_name': '薛超', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-22', 'person_id': 103, 'person_name': '薛超2', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-23', 'person_id': 104, 'person_name': '黄国强2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-23', 'person_id': 105, 'person_name': '齐星2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-23', 'person_id': 106, 'person_name': '薛超1', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-23', 'person_id': 107, 'person_name': '薛超3', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-24', 'person_id': 100, 'person_name': '黄国强', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-24', 'person_id': 101, 'person_name': '齐星', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-24', 'person_id': 102, 'person_name': '薛超', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-24', 'person_id': 103, 'person_name': '薛超2', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-25', 'person_id': 104, 'person_name': '黄国强2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-25', 'person_id': 105, 'person_name': '齐星2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-25', 'person_id': 106, 'person_name': '薛超1', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-25', 'person_id': 107, 'person_name': '薛超3', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-26', 'person_id': 100, 'person_name': '黄国强', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-26', 'person_id': 101, 'person_name': '齐星', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-26', 'person_id': 102, 'person_name': '薛超', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-26', 'person_id': 103, 'person_name': '薛超2', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-27', 'person_id': 104, 'person_name': '黄国强2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': True},
-            {'team_id': 100, 'date': '2018-03-27', 'person_id': 105, 'person_name': '齐星2', 'shift_id': 10,
-             'shift_name': '白班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-27', 'person_id': 106, 'person_name': '薛超1', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': False},
-            {'team_id': 100, 'date': '2018-03-27', 'person_id': 107, 'person_name': '薛超3', 'shift_id': 11,
-             'shift_name': '夜班', 'is_master': True}]
+    schedulelist = json.loads(request.body)
+    mist = schedulelist['list']
     i = 0
     num = len(mist)
-    while i < 4:
+    oldestdate = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
+    teamid = mist[0]['team_id']
+
+    while i < num:
+        item = mist[i].copy()
+        item['date'] = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
+        if oldestdate > item['date']:
+            oldestdate = item['date']
+        i = i + 1
+    Schedule.objects.filter(team_id=teamid).filter(date__gte=oldestdate).delete()
+    i = 0
+    while i < 12:
         j = 0
         while j < num:
             item = mist[j].copy()
@@ -142,8 +117,7 @@ def generate(request):
             new_schedule_obj.save()
             j = j + 1
         i = i + 1
-
-    return render(request, 'fullcalendar.html')
+    return render(request, 'calendar.html')
 
 
 def get_schedule(request):
@@ -168,7 +142,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('name',)
+    filter_fields = ('id', 'name')
 
 
 # shift view
@@ -176,7 +150,7 @@ class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('name',)
+    filter_fields = ('id', 'name')
 
 
 # person view
@@ -184,4 +158,4 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id','team_id','name')
+    filter_fields = ('id', 'team_id', 'name')

@@ -72,18 +72,32 @@
                 selectable: true,
                 select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                     console.log("↓↓↓select↓↓↓");
-                    console.log("start:" + start + "|end:" + end + "|jsEvent:" + jsEvent + "|view:" + view.title);
-                    var title = prompt('Event Title:');
-                    var eventData;
-                    if (title) {
-                        eventData = {
-                            title: title,
-                            start: start,
-                            end: end
-                        };
-                        $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                    }
-                    $('#calendar').fullCalendar('unselect');
+                    var newstart = start.format("YYYY-MM-DD");
+                    scheduleobj = new Object();
+                    scheduleobj.date = newstart;
+                    $('input[value="true"]').prop('checked', true).trigger('change');
+                    $('#myModal').modal();
+                    $('#myModal').on('hidden.bs.modal', function () {
+                        // 执行一些动作...
+                        $("#txt_personname").val('');
+                        $("#txt_shiftname").val('');
+                        $('input[value="true"]').prop('checked', true).trigger('change');
+                        if (scheduleobj.person_name != null) {
+                            var title = scheduleobj.person_name + ',' + scheduleobj.shift_name;
+                            var eventData;
+                            if (title) {
+                                eventData = {
+                                    title: title,
+                                    start: start,
+                                    scheduleobj: scheduleobj,
+                                    end: end
+                                };
+                                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                            }
+                        }
+                        $('#calendar').fullCalendar('unselect');
+                    })
+
                 },
                 events: function (start, end, timezone, callback) {
                     var date = new Date(this.getDate())
@@ -110,6 +124,7 @@
                     });
                 },
                 eventClick: function (event, element) {
+                    scheduleobj = new Object();
                     alert(event.scheduleobj.person_id)
                     $.ajax({
                         url: '/api/person/',
@@ -153,48 +168,93 @@
 
             //});
             $("#btn_submit").click(function () {
-                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if (scheduleobj.person_name != $("#txt_personname").val() ||
-                    scheduleobj.shift_name != $("#txt_shiftname").val() ||
-                    scheduleobj.is_master != ismaster) {
-                    $.ajax({
-                        url: '/api/person/',
-                        type: "GET",
-                        dataType: 'json',
-                        data: {
-                            name: $("#txt_personname").val(),
-                        },
-                        success: function (result) {
-                            if (result.length == 0) {
-                                alert("值班人不存在，请重新输入")
-                                $('#myModal').modal("show");
-                            } else {
-                                $.ajax({
-                                    url: '/api/schedule/' + scheduleobj.id + '/',
-                                    type: "put",
-                                    dataType: 'json',
-                                    data: {
-                                        team_id: scheduleobj.team_id,
-                                        date: scheduleobj.date,
-                                        person_id: result[0].id,
-                                        person_name: result[0].name,
-                                        shift_id: 10,
-                                        shift_name: $("#txt_shiftname").val(),
-                                        is_master: ismaster
-                                    },
-                                    success: function (result) {
-                                        if (result) {
-                                            alert("更新成功");
-                                        } else {
-                                            alert("更新失败，请重试");
-                                            $('#myModal').modal("show");
+                if ($("#myModalLabel").text() == '新增') {
+                    var ismaster = ('true' == $("input[name='ismaster']:checked").val());
+                    if ($("#txt_personname").val() != '' || $("#txt_shiftname").val() != '') {
+                        $.ajax({
+                            url: '/api/person/',
+                            type: "GET",
+                            dataType: 'json',
+                            data: {
+                                name: $("#txt_personname").val(),
+                            },
+                            success: function (result) {
+                                if (result.length == 0) {
+                                    alert("值班人不存在，请重新输入")
+                                    $('#myModal').modal("show");
+                                } else {
+                                    $.ajax({
+                                        url: '/api/schedule/',
+                                        type: "POST",
+                                        dataType: 'json',
+                                        data: {
+                                            team_id: 100,
+                                            date: scheduleobj.date,
+                                            person_id: result[0].id,
+                                            person_name: result[0].name,
+                                            shift_id: 10,
+                                            shift_name: $("#txt_shiftname").val(),
+                                            is_master: ismaster
+                                        },
+                                        success: function (result) {
+                                            if (result) {
+                                                scheduleobj = result;
+                                                alert("添加成功");
+                                            } else {
+                                                alert("添加失败，请重试");
+                                                $('#myModal').modal("show");
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
 
+                    }
+                } else {
+                    var ismaster = ('true' == $("input[name='ismaster']:checked").val());
+                    if (scheduleobj.person_name != $("#txt_personname").val() ||
+                        scheduleobj.shift_name != $("#txt_shiftname").val() ||
+                        scheduleobj.is_master != ismaster) {
+                        $.ajax({
+                            url: '/api/person/',
+                            type: "GET",
+                            dataType: 'json',
+                            data: {
+                                name: $("#txt_personname").val(),
+                            },
+                            success: function (result) {
+                                if (result.length == 0) {
+                                    alert("值班人不存在，请重新输入")
+                                    $('#myModal').modal("show");
+                                } else {
+                                    $.ajax({
+                                        url: '/api/schedule/' + scheduleobj.id + '/',
+                                        type: "put",
+                                        dataType: 'json',
+                                        data: {
+                                            team_id: scheduleobj.team_id,
+                                            date: scheduleobj.date,
+                                            person_id: result[0].id,
+                                            person_name: result[0].name,
+                                            shift_id: 10,
+                                            shift_name: $("#txt_shiftname").val(),
+                                            is_master: ismaster
+                                        },
+                                        success: function (result) {
+                                            if (result) {
+                                                alert("更新成功");
+                                            } else {
+                                                alert("更新失败，请重试");
+                                                $('#myModal').modal("show");
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        });
+
+                    }
                 }
             });
             $("#btn_detaildel").click(function () {
@@ -278,7 +338,7 @@
                         class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
                 </button>
                 <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
-                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>保存
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
                 </button>
             </div>
         </div>
@@ -322,10 +382,10 @@
                         class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
                 </button>
                 <button type="button" id="btn_detaildel" class="btn btn-primary" data-dismiss="modal"><span
-                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>删除排班
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>删除排班
                 </button>
                 <button type="button" id="btn_detailmodify" class="btn btn-primary" data-dismiss="modal"><span
-                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true" disabled></span>更改值班人
+                        class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>更改值班人
                 </button>
             </div>
         </div>

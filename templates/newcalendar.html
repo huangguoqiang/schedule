@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Bootstrap Admin</title>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/theme.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.css">
+
+    <script src="/static/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link href='/static/css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <script src='/static/jquery//moment.min.js'></script>
+    <script src='/static/js/fullcalendar.min.js'></script>
+    <!-- Demo page code -->
+
+    <style type="text/css">
+        #line-chart {
+            height: 300px;
+            width: 800px;
+            margin: 0px auto;
+            margin-top: 1em;
+        }
+
+        .brand {
+            font-family: georgia, serif;
+        }
+
+        .brand .first {
+            color: #ccc;
+            font-style: italic;
+        }
+
+        .brand .second {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .s_center {
+            width: auto;
+            padding: 0 2%;
+            margin: 0;
+        }
+
+        .s_center option {
+            text-align: center;
+        }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="/static/images/favicon.ico">
+</head>
+
+<!--[if lt IE 7 ]> <body class="ie ie6"> <![endif]-->
+<!--[if IE 7 ]> <body class="ie ie7 "> <![endif]-->
+<!--[if IE 8 ]> <body class="ie ie8 "> <![endif]-->
+<!--[if IE 9 ]> <body class="ie ie9 "> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<body class="">
+<!--<![endif]-->
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <ul class="nav pull-right">
+
+            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>
+            <li id="fat-menu" class="dropdown">
+                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon-user"></i> Jack Smith
+                    <i class="icon-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a tabindex="-1" href="#">My Account</a></li>
+                    <li class="divider"></li>
+                    <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
+                    <li class="divider visible-phone"></li>
+                    <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+                </ul>
+            </li>
+
+        </ul>
+        <a class="brand" href="index.html"><span class="first">Your</span> <span class="second">Company</span></a>
+    </div>
+</div>
+
+
+<div class="copyrights">Collect from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></div>
+<div class="sidebar-nav">
+    <form class="search form-inline">
+        <input type="text" placeholder="Search...">
+    </form>
+
+    <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
+    <ul id="dashboard-menu" class="nav nav-list collapse in">
+        <li><a href="/home">排班表</a></li>
+        <li><a href="/users">值班人员管理</a></li>
+        <li><a href="/shift">班次管理</a></li>
+        <li><a href="/team">值班组管理</a></li>
+        <li><a href="/calendar">生成排班表</a></li>
+
+    </ul>
+
+    <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>Account<span
+            class="label label-info">+3</span></a>
+    <ul id="accounts-menu" class="nav nav-list collapse">
+        <li><a href="sign-in.html">Sign In</a></li>
+        <li><a href="sign-up.html">Sign Up</a></li>
+        <li><a href="reset-password.html">Reset Password</a></li>
+    </ul>
+
+</div>
+
+
+<div class="content">
+
+    <div class="header">
+        <div class="stats">
+            <p class="stat"><span class="number">53</span>tickets</p>
+            <p class="stat"><span class="number">27</span>tasks</p>
+            <p class="stat"><span class="number">15</span>waiting</p>
+        </div>
+
+        <h1 class="page-title">生成排班</h1>
+    </div>
+
+    <ul class="breadcrumb">
+        <li><a href="index.html">Home</a> <span class="divider">/</span></li>
+        <li class="active">生成排班</li>
+        <select class="form-control s_center" id="cRoleName" name="cRoleName">
+        </select>
+    </ul>
+
+    <div class="container-fluid">
+        <div id='wrap'>
+            <div class="btn-toolbar">
+                <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 生成排班</button>
+                <div class="btn-group">
+                </div>
+            </div>
+            <div id='calendar'></div>
+
+            <div style='clear:both'></div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myModalLabel">新增</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="txt_personname">值班人姓名</label>
+                            <input type="text" name="txt_personname" class="form-control" id="txt_personname"
+                                   placeholder="值班人姓名">
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_shiftname">班次</label>
+                            <select class="form-control" id="sel_shiftname" name="sel_shiftname">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_ismaster">是否为主值班人</label>
+                            <br>
+                            <input type="radio" name="ismaster" value="true" checked>是
+                            <br>
+                            <input type="radio" name="ismaster" value="false">否
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                        </button>
+                        <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="myDetailLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myDetailLabel">值班人信息</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="txt_detailname">值班人姓名</label>
+                            <input type="text" name="txt_detailname" class="form-control" id="txt_detailname"
+                                   placeholder="值班人姓名" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_telnum">联系电话</label>
+                            <input type="text" name="txt_telnum" class="form-control" id="txt_telnum"
+                                   placeholder="联系电话" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_email">邮箱</label>
+                            <input type="text" name="txt_email" class="form-control" id="txt_email"
+                                   placeholder="邮箱" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_ismaster">是否为主值班人</label>
+                            <br>
+                            <input type="radio" name="ismaster" value="yes" checked>是
+                            <br>
+                            <input type="radio" name="ismaster" value="no">否
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                        </button>
+                        {#                        <button type="button" id="btn_detaildel" class="btn btn-primary" data-dismiss="modal"><span#}
+                        {#                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>删除排班#}
+                        {#                        </button>#}
+                        <button type="button" id="btn_detailmodify" class="btn btn-primary" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>更改值班人
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function start() {
+        $.ajax({
+            url: '/api/team/',
+            type: "GET",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                var ddl = $("#cRoleName");
+                //删除节点
+                RemoveOption();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                var i = 0;
+                $(result).each(function (key) {
+                    //第一种方法
+                    if (i == 0) {
+                        var opt = "<option value='" + result[key].id + "' selected>" + result[key].name + "</option>";
+                    } else {
+                        var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    }
+                    i++;
+                    ddl.append(opt);
+                });
+
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
+    }
+
+    function RemoveOption() {
+        $("#cRoleName option").remove();
+    }
+
+
+    function AppendOption(value, text) {
+        $("#cRoleName").append("<option value='" + value + "'>" + text + "</option>");
+    }
+
+    $(function () {
+        start();
+        $("#cRoleName option:first").prop("selected", 'selected');
+        start1();
+        $("#sel_shiftname option:first").prop("selected", 'selected');
+    });
+    $("#cRoleName").change(function () {
+        $('#calendar').fullCalendar('refetchEvents');
+    });
+
+    function start1() {
+        $.ajax({
+            url: '/api/shift/',
+            type: "GET",
+            dataType: 'json',
+            data: {},
+            success: function (data) {
+                var ddl = $("#sel_shiftname");
+                //删除节点
+                RemoveOption1();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
+                    var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl.append(opt);
+                });
+
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
+    }
+
+    function RemoveOption1() {
+        $("#sel_shiftname option").remove();
+    }
+
+    $("#sel_shiftname").change(function () {
+
+    });
+</script>
+<script>
+    var events = [];
+    $(document).ready(function () {
+        /*  className colors
+
+        className: default(transparent), important(red), chill(pink), success(green), info(blue)
+
+        */
+        var scheduleobj = ''
+        /* initialize the external events
+        -----------------------------------------------------------------*/
+
+        $('#external-events div.external-event').each(function () {
+
+            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+            // it doesn't need to have a start or end
+            var eventObject = {
+                title: $.trim($(this).text()) // use the element's text as the event title
+            };
+
+            // store the Event Object in the DOM element so we can get to it later
+            $(this).data('eventObject', eventObject);
+
+            // make the event draggable using jQuery UI
+            $(this).draggable({
+                zIndex: 999,
+                revert: true,      // will cause the event to go back to its
+                revertDuration: 0  //  original position after the drag
+            });
+
+        });
+
+
+        /* initialize the calendar
+        -----------------------------------------------------------------*/
+        var flag = 0;
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'today'
+            },
+            lang: 'zh-cn',
+            timezone: "local",
+            {#editable: true,#}
+            eventLimit: true, // allow "more" link when too many events
+            selectable: true,
+            select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
+                console.log("↓↓↓select↓↓↓");
+                var newstart = start.format("YYYY-MM-DD");
+                scheduleobj = new Object();
+                scheduleobj.date = newstart;
+                $('input[value="true"]').prop('checked', true).trigger('change');
+                $('#myModal').modal();
+                $('#myModal').on('hidden.bs.modal', function () {
+                    // 执行一些动作...
+                    if ($("#myModalLabel").text() == '新增') {
+                        $("#txt_personname").val('');
+                        $("#sel_shiftname option:first").prop("selected", 'selected');
+                        $('input[value="true"]').prop('checked', true).trigger('change');
+                    }
+                })
+
+            },
+            events: function (start, end, timezone, callback) {
+                callback(events);
+            },
+            eventClick: function (event, element) {
+                scheduleobj = new Object();
+                $.ajax({
+                    url: '/api/person/',
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        id: event.person_id,
+                    },
+                    success: function (result) {
+                        if (result.length == 0) {
+                            alert("值班人信息有误，请重试")
+                        } else {
+                            $("#txt_detailname").val(result[0].name);
+                            $("#txt_telnum").val(result[0].tel_num);
+                            $("#txt_email").val(result[0].email);
+                            if (event.is_master == true) {
+                                $('input[value="yes"]').prop('checked', true).trigger('change')
+                            } else {
+                                $('input[value="no"]').prop('checked', true).trigger('change')
+                            }
+                            scheduleobj = event;
+                            $("#myModalLabel").text("更新");
+                            $('#detail').modal();
+
+                            $('#myModal').on('hidden.bs.modal', function () {
+                                // 执行一些动作...
+                                if ($("#myModalLabel").text() == '更新') {
+                                    event.title = scheduleobj.title;
+                                    //更新日程对象信息
+                                    $('#calendar').fullCalendar('updateEvent', event);
+                                }
+                                $("#txt_personname").val('');
+                                $("#sel_shiftname option:first").prop("selected", 'selected');
+                                $('input[value="true"]').prop('checked', true).trigger('change');
+                                alert(events[0].shift_name)
+                            })
+
+                        }
+                    }
+                });
+            }
+        });
+        //$("#txt_personname").on("input", function (evt) {
+        //   if ($(this).val().trim().length) {
+        //    $("#btn_submit").removeAttr("disabled");
+        // } else {
+        //  alert("值班人姓名不能为空，请重新输入");
+        // $("#btn_submit").prop("disabled", "disabled");
+        //}
+
+        //});
+        $("#btn_submit").click(function () {
+            if ($("#myModalLabel").text() == '新增') {
+                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
+                if ($("#txt_personname").val() != '') {
+                    $.ajax({
+                        url: '/api/person/',
+                        type: "GET",
+                        dataType: 'json',
+                        data: {
+                            name: $("#txt_personname").val(),
+                            team_id: $("#cRoleName").val(),
+                        },
+                        success: function (result) {
+                            if (result.length == 0) {
+                                alert("值班人信息不正确，请重新输入")
+                                $('#myModal').modal("show");
+                            } else {
+                                flag = flag + 1;
+                                events.push({
+                                    title: result[0].name + ',' + $("#sel_shiftname").find("option:selected").text(),
+                                    start: scheduleobj.date,
+                                    team_id: $("#cRoleName").val(),
+                                    date: scheduleobj.date,
+                                    person_id: result[0].id,
+                                    person_name: result[0].name,
+                                    shift_id: $("#sel_shiftname").val(),
+                                    shift_name: $("#sel_shiftname").find("option:selected").text(),
+                                    is_master: ismaster,
+                                    flag: flag
+                                });
+                                if (events[events.length - 1].person_name != null) {
+                                    $('#calendar').fullCalendar('renderEvent', events[events.length - 1], true); // stick? = true
+                                }
+                                $('#calendar').fullCalendar('unselect');
+                            }
+                        }
+                    });
+
+                } else {
+                    alert("数据不能为空，请重试");
+                    $('#myModal').modal("show");
+                }
+            } else {
+                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
+                if (scheduleobj.person_name != $("#txt_personname").val() ||
+                    scheduleobj.shift_id != $("#sel_shiftname").val() ||
+                    scheduleobj.is_master != ismaster) {
+                    $.ajax({
+                        url: '/api/person/',
+                        type: "GET",
+                        dataType: 'json',
+                        data: {
+                            name: $("#txt_personname").val(),
+                            team_id: $("#cRoleName").val(),
+                        },
+                        success: function (result) {
+                            if (result.length == 0) {
+                                alert("值班人信息不正确，请重新输入")
+                                $('#myModal').modal("show");
+                            } else {
+                                events[scheduleobj.flag - 1].person_id = result[0].id;
+                                events[scheduleobj.flag - 1].person_name = result[0].name;
+                                events[scheduleobj.flag - 1].shift_id = 10;
+                                events[scheduleobj.flag - 1].shift_name = $("#sel_shiftname").find("option:selected").text();
+                                events[scheduleobj.flag - 1].is_master = ismaster;
+                                scheduleobj.title = scheduleobj.person_name + ',' + scheduleobj.shift_name;
+                                alert("更新成功");
+                            }
+                        }
+                    });
+
+                }
+            }
+        });
+        $("#btn_detaildel").click(function () {
+
+        });
+        $("#btn_detailmodify").click(function () {
+            $("#txt_personname").val(scheduleobj.person_name);
+            $("#sel_shiftname").val(scheduleobj.shift_id);
+            if (scheduleobj.is_master == true) {
+                $('input[value="true"]').prop('checked', true).trigger('change')
+            } else {
+                $('input[value="false"]').prop('checked', true).trigger('change')
+            }
+            $('#myModal').modal();
+        });
+    })
+
+    function getDate(strDate) {
+        var date = eval('new Date(' + strDate.replace(/\d+(?=-[^-]+$)/,
+            function (a) {
+                return parseInt(a, 10) - 1;
+            }).match(/\d+/g) + ')');
+        return date;
+    }
+
+    Array.prototype.unique3 = function () {
+        var res = [];
+        var json = {};
+        for (var i = 0; i < this.length; i++) {
+            if (!json[this[i]]) {
+                res.push(this[i]);
+                json[this[i]] = 1;
+            }
+        }
+        return res;
+    }
+
+    function generate() {
+
+        var oldlist = [];
+        for (var i = 0; i < events.length; i++) {  //循环LIST
+            var veh = events[i];//获取LIST里面的对象
+            oldlist[i] = new Date(veh.date);
+        }
+        //先去重
+        var newlist = oldlist.unique3();
+        if (newlist.length != 8) {
+            alert("您输入的排班天数大于或小于8天，请重新输入");
+            return
+        }
+        // 先排序，然后转时间戳
+        for (var i = 0; i < newlist.length; i++) {
+            newlist[i].setDate(newlist[i].getDate() + 4 - i);
+        }
+        var flag = true;
+        for (var i = 1; i < newlist.length; i++) {
+            if ((newlist[0] - newlist[i]) != 0) {
+                flag = false;
+            }
+        }
+        if (flag == false) {
+            alert("您输入的排班时间不连续，请重新输入");
+            location.reload();
+            return
+        }
+// 比较时间戳是否一致
+        var params = {
+            list: events
+        };
+        $.ajax({
+            url: /generate/,
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify(params),
+            contentType: 'application/json',
+            success: function (data) {
+                alert("生成成功");
+            },
+            error: function (data, status, er) {
+                console.log(data);
+            }
+        });
+        alert("生成成功");
+        window.location.href = "/home/";
+    }
+</script>
+</body>
+</html>
+
+

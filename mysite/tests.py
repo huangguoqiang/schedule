@@ -3,5 +3,5 @@ from mysite.models import *
 import datetime
 # Create your tests here.
 
-str = (datetime.datetime.strftime('2017-03-13', '%Y-%m-%d') + datetime.timedelta(days=8)).strftime('%Y-%m-%d')
-print(str)
+oldestdate = datetime.datetime.now()
+Schedule.objects.filter(team_id=7).filter(date__gt=oldestdate).delete()

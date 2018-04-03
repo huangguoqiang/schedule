@@ -16,10 +16,18 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from mysite.urls import router as mysite_router
-from mysite.views import index
+from mysite.views import *
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # include mysite_router
     url(r'^api/', include(mysite_router.urls)),
     url(r'^$', index),
+    url(r'^home/', index),
+    url(r'^calendar/', calendar),
+    url(r'^shift/', shift),
+    url(r'^team/', team),
+    url(r'^users/', users),
+    url(r'^generate/', generate),
+    url(r'^get_health/', get_health),
 ]
