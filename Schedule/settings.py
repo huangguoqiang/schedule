@@ -23,11 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'pj5)e!!-ho#v&pqcvg7974e76rwdwfs5*j)b%27fw_8uc@%i9u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
-
+STATIC_ROOT = os.path.join(BASE_DIR,"static/")
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'mysite',
     'rest_framework',
     'django_filters',
-    'test',
 ]
 
 MIDDLEWARE = [
@@ -83,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'schedule',
         'USER': 'root',
-        'PASSWORD': 'q1992516',
+        'PASSWORD': 'qwer1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
