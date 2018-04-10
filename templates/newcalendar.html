@@ -140,7 +140,7 @@
     <ul class="breadcrumb">
         <li><a href="index.html">Home</a> <span class="divider">/</span></li>
         <li class="active">生成排班</li>
-        <select class="form-control s_center" id="cRoleName" name="cRoleName">
+        <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
     </ul>
 
@@ -164,24 +164,48 @@
                         <h4 class="modal-title" id="myModalLabel">新增</h4>
                     </div>
                     <div class="modal-body">
-
                         <div class="form-group">
-                            <label for="txt_personname">值班人姓名</label>
-                            <input type="text" name="txt_personname" class="form-control" id="txt_personname"
-                                   placeholder="值班人姓名">
-                        </div>
-                        <div class="form-group">
-                            <label for="txt_shiftname">班次</label>
-                            <select class="form-control" id="sel_shiftname" name="sel_shiftname">
+                            <label for="txt_shiftname1">班次</label>
+                            <select class="form-control" id="sel_shiftname1" name="sel_shiftname1">
                             </select>
                         </div>
                         <div class="form-group">
+                            <label for="txt_MPname1">主值班人</label>
+                            <select class="form-control" id="sel_MPname1" name="sel_MPname1">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_SPname1">次值班人</label>
+                            <select class="form-control" id="sel_SPname1" name="sel_SPname1">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_shiftname2">班次</label>
+                            <select class="form-control" id="sel_shiftname2" name="sel_shiftname2">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_MPname2">主值班人</label>
+                            <select class="form-control" id="sel_MPname2" name="sel_MPname2">
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="txt_SPname2">次值班人</label>
+                            <select class="form-control" id="sel_SPname2" name="sel_SPname2">
+                            </select>
+                        </div>
+                        {% comment %}<div class="form-group">
+                            <label for="txt_personname">值班人姓名</label>
+                            <input type="text" name="txt_personname" class="form-control" id="txt_personname"
+                                   placeholder="值班人姓名">
+                        </div>{% endcomment %}
+                        {% comment %}<div class="form-group">
                             <label for="txt_ismaster">是否为主值班人</label>
                             <br>
                             <input type="radio" name="ismaster" value="true" checked>是
                             <br>
                             <input type="radio" name="ismaster" value="false">否
-                        </div>
+                        </div>{% endcomment %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"><span
@@ -194,66 +218,20 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="detail" tabindex="-1" role="dialog" aria-labelledby="myDetailLabel">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">×</span></button>
-                        <h4 class="modal-title" id="myDetailLabel">值班人信息</h4>
-                    </div>
-                    <div class="modal-body">
-
-                        <div class="form-group">
-                            <label for="txt_detailname">值班人姓名</label>
-                            <input type="text" name="txt_detailname" class="form-control" id="txt_detailname"
-                                   placeholder="值班人姓名" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="txt_telnum">联系电话</label>
-                            <input type="text" name="txt_telnum" class="form-control" id="txt_telnum"
-                                   placeholder="联系电话" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="txt_email">邮箱</label>
-                            <input type="text" name="txt_email" class="form-control" id="txt_email"
-                                   placeholder="邮箱" disabled>
-                        </div>
-                        <div class="form-group">
-                            <label for="txt_ismaster">是否为主值班人</label>
-                            <br>
-                            <input type="radio" name="ismaster" value="yes" checked>是
-                            <br>
-                            <input type="radio" name="ismaster" value="no">否
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><span
-                                class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
-                        </button>
-                        {#                        <button type="button" id="btn_detaildel" class="btn btn-primary" data-dismiss="modal"><span#}
-                        {#                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>删除排班#}
-                        {#                        </button>#}
-                        <button type="button" id="btn_detailmodify" class="btn btn-primary" data-dismiss="modal"><span
-                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>更改值班人
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 <script type="text/javascript">
-    function start() {
+    function startTeam() {
         $.ajax({
             url: '/api/team/',
             type: "GET",
             dataType: 'json',
+            async: false,
             data: {},
             success: function (data) {
-                var ddl = $("#cRoleName");
+                var ddl = $("#sel_teamname");
                 //删除节点
-                RemoveOption();
+                $("#sel_teamname option").remove();
                 //转成Json对象
                 var result = eval(data);
                 //循环遍历 下拉框绑定
@@ -281,41 +259,35 @@
         });
     }
 
-    function RemoveOption() {
-        $("#cRoleName option").remove();
-    }
-
-
-    function AppendOption(value, text) {
-        $("#cRoleName").append("<option value='" + value + "'>" + text + "</option>");
-    }
-
-    $(function () {
-        start();
-        $("#cRoleName option:first").prop("selected", 'selected');
-        start1();
-        $("#sel_shiftname option:first").prop("selected", 'selected');
-    });
-    $("#cRoleName").change(function () {
-        $('#calendar').fullCalendar('refetchEvents');
-    });
-
-    function start1() {
+    function startShift() {
         $.ajax({
             url: '/api/shift/',
             type: "GET",
             dataType: 'json',
             data: {},
             success: function (data) {
-                var ddl = $("#sel_shiftname");
+                var ddl = $("#sel_shiftname1");
                 //删除节点
-                RemoveOption1();
+                $("#sel_shiftname1 option").remove();
                 //转成Json对象
                 var result = eval(data);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
-                    var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    var opt = "<option value='" + result[key].id + "'>" + result[key].name +
+                        "(" + result[key].time + ")</option>";
                     ddl.append(opt);
+                });
+
+                var dd2 = $("#sel_shiftname2");
+                //删除节点
+                $("#sel_shiftname2 option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
+                    var opt = "<option value='" + result[key].id + "'>" + result[key].name +
+                        "(" + result[key].time + ")</option>";
+                    dd2.append(opt);
                 });
 
             },
@@ -330,15 +302,103 @@
         });
     }
 
-    function RemoveOption1() {
-        $("#sel_shiftname option").remove();
+    function startPerson() {
+        $.ajax({
+            url: '/api/person/',
+            type: "GET",
+            dataType: 'json',
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
+            success: function (data) {
+                var ddl1 = $("#sel_MPname1");
+                var opt = '';
+                //删除节点
+                $("#sel_MPname1 option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
+                    opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl1.append(opt);
+                });
+
+                var ddl2 = $("#sel_SPname1");
+                //删除节点
+                $("#sel_SPname1 option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                opt = "<option value='-1'>" + "请选择" + "</option>";
+                ddl2.append(opt);
+                $(result).each(function (key) {
+                    opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl2.append(opt);
+                });
+
+                var ddl3 = $("#sel_MPname2");
+                //删除节点
+                $("#sel_MPname2 option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
+                    opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl3.append(opt);
+                });
+
+                var ddl4 = $("#sel_SPname2");
+                //删除节点
+                $("#sel_SPname2 option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                opt = "<option value='-1'>" + "请选择" + "</option>";
+                ddl4.append(opt);
+                $(result).each(function (key) {
+                    opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl4.append(opt);
+                });
+
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
     }
+    $("#sel_teamname").change(function () {
+        $('#calendar').fullCalendar('refetchEvents');
+        startPerson();
+        $("#sel_MPname1 option:first").prop("selected", 'selected');
+        $("#sel_SPname1 option:first").prop("selected", 'selected');
+        $("#sel_MPname2 option:first").prop("selected", 'selected');
+        $("#sel_SPname2 option:first").prop("selected", 'selected');
+    });
 
     $("#sel_shiftname").change(function () {
 
     });
+
+    $(function () {
+        startTeam();
+        $("#sel_teamname option:first").prop("selected", 'selected');
+        startShift();
+        $("#sel_shiftname1 option:first").prop("selected", 'selected');
+        $("#sel_shiftname2 option:first").prop("selected", 'selected');
+        startPerson();
+        $("#sel_MPname1 option:first").prop("selected", 'selected');
+        $("#sel_SPname1 option:first").prop("selected", 'selected');
+        $("#sel_MPname2 option:first").prop("selected", 'selected');
+        $("#sel_SPname2 option:first").prop("selected", 'selected');
+    });
 </script>
 <script>
+    var eventslist = [];
     var events = [];
     $(document).ready(function () {
         /*  className colors
@@ -373,7 +433,6 @@
 
         /* initialize the calendar
         -----------------------------------------------------------------*/
-        var flag = 0;
         $('#calendar').fullCalendar({
             header: {
                 left: 'prev,next',
@@ -390,14 +449,20 @@
                 var newstart = start.format("YYYY-MM-DD");
                 scheduleobj = new Object();
                 scheduleobj.date = newstart;
-                $('input[value="true"]').prop('checked', true).trigger('change');
+                {#$('input[value="true"]').prop('checked', true).trigger('change');#}
+                $("#myModalLabel").text("新增");
                 $('#myModal').modal();
                 $('#myModal').on('hidden.bs.modal', function () {
                     // 执行一些动作...
                     if ($("#myModalLabel").text() == '新增') {
-                        $("#txt_personname").val('');
-                        $("#sel_shiftname option:first").prop("selected", 'selected');
-                        $('input[value="true"]').prop('checked', true).trigger('change');
+                        {#$("#txt_personname").val('');#}
+                        $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                        $("#sel_MPname1 option:first").prop("selected", 'selected');
+                        $("#sel_SPname1 option:first").prop("selected", 'selected');
+                        $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                        $("#sel_MPname2 option:first").prop("selected", 'selected');
+                        $("#sel_SPname2 option:first").prop("selected", 'selected');
+                        {#$('input[value="true"]').prop('checked', true).trigger('change');#}
                     }
                 })
 
@@ -407,142 +472,135 @@
             },
             eventClick: function (event, element) {
                 scheduleobj = new Object();
-                $.ajax({
-                    url: '/api/person/',
-                    type: "GET",
-                    dataType: 'json',
-                    data: {
-                        id: event.person_id,
-                    },
-                    success: function (result) {
-                        if (result.length == 0) {
-                            alert("值班人信息有误，请重试")
+                scheduleobj = event;
+                var mylist = eventslist[event.index];
+                var m = 0, n = 0;
+                for (var i = 0; i < mylist.length; i++) {
+                    if (mylist[i].order == 0) {
+                        if (m == 0) {
+                            $("#sel_shiftname1").val(mylist[i].shift_id);
+                            $("#sel_MPname1").val(mylist[i].person_id);
                         } else {
-                            $("#txt_detailname").val(result[0].name);
-                            $("#txt_telnum").val(result[0].tel_num);
-                            $("#txt_email").val(result[0].email);
-                            if (event.is_master == true) {
-                                $('input[value="yes"]').prop('checked', true).trigger('change')
-                            } else {
-                                $('input[value="no"]').prop('checked', true).trigger('change')
-                            }
-                            scheduleobj = event;
-                            $("#myModalLabel").text("更新");
-                            $('#detail').modal();
-
-                            $('#myModal').on('hidden.bs.modal', function () {
-                                // 执行一些动作...
-                                if ($("#myModalLabel").text() == '更新') {
-                                    event.title = scheduleobj.title;
-                                    //更新日程对象信息
-                                    $('#calendar').fullCalendar('updateEvent', event);
-                                }
-                                $("#txt_personname").val('');
-                                $("#sel_shiftname option:first").prop("selected", 'selected');
-                                $('input[value="true"]').prop('checked', true).trigger('change');
-                                alert(events[0].shift_name)
-                            })
-
+                            $("#sel_SPname1").val(mylist[i].person_id);
                         }
+                        m++;
+                    } else {
+                        if (n == 0) {
+                            $("#sel_shiftname2").val(mylist[i].shift_id);
+                            $("#sel_MPname2").val(mylist[i].person_id);
+                        } else {
+                            $("#sel_SPname2").val(mylist[i].person_id);
+                        }
+                        n++;
                     }
-                });
+                }
+                $("#myModalLabel").text("更新");
+                $('#myModal').modal();
+                $('#myModal').on('hidden.bs.modal', function () {
+                    // 执行一些动作...
+                    if ($("#myModalLabel").text() == '更新') {
+                        event.title = scheduleobj.title;
+                        //更新日程对象信息
+                        $('#calendar').fullCalendar('updateEvent', event);
+                    }
+                    $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                    $("#sel_MPname1 option:first").prop("selected", 'selected');
+                    $("#sel_SPname1 option:first").prop("selected", 'selected');
+                    $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                    $("#sel_MPname2 option:first").prop("selected", 'selected');
+                    $("#sel_SPname2 option:first").prop("selected", 'selected');
+                })
             }
         });
-        //$("#txt_personname").on("input", function (evt) {
-        //   if ($(this).val().trim().length) {
-        //    $("#btn_submit").removeAttr("disabled");
-        // } else {
-        //  alert("值班人姓名不能为空，请重新输入");
-        // $("#btn_submit").prop("disabled", "disabled");
-        //}
 
-        //});
+        var index = 0;
+        var list = [];
+
+        function pushEvents(title, person_id, person_name, shift_id, shift_name, is_master, order) {
+            list.push({
+                title: title,
+                team_id: $("#sel_teamname").val(),
+                date: scheduleobj.date,
+                person_id: person_id,
+                person_name: person_name,
+                shift_id: shift_id,
+                shift_name: shift_name,
+                is_master: is_master,
+                order: order
+            });
+        }
+
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
-                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if ($("#txt_personname").val() != '') {
-                    $.ajax({
-                        url: '/api/person/',
-                        type: "GET",
-                        dataType: 'json',
-                        data: {
-                            name: $("#txt_personname").val(),
-                            team_id: $("#cRoleName").val(),
-                        },
-                        success: function (result) {
-                            if (result.length == 0) {
-                                alert("值班人信息不正确，请重新输入")
-                                $('#myModal').modal("show");
-                            } else {
-                                flag = flag + 1;
-                                events.push({
-                                    title: result[0].name + ',' + $("#sel_shiftname").find("option:selected").text(),
-                                    start: scheduleobj.date,
-                                    team_id: $("#cRoleName").val(),
-                                    date: scheduleobj.date,
-                                    person_id: result[0].id,
-                                    person_name: result[0].name,
-                                    shift_id: $("#sel_shiftname").val(),
-                                    shift_name: $("#sel_shiftname").find("option:selected").text(),
-                                    is_master: ismaster,
-                                    flag: flag
-                                });
-                                if (events[events.length - 1].person_name != null) {
-                                    $('#calendar').fullCalendar('renderEvent', events[events.length - 1], true); // stick? = true
-                                }
-                                $('#calendar').fullCalendar('unselect');
-                            }
-                        }
-                    });
+                var title = $("#sel_MPname1").find("option:selected").text() + ',' +
+                    $("#sel_shiftname1").find("option:selected").text();
+                var titlesum = title;
+                pushEvents(title, $("#sel_MPname1").val(), $("#sel_MPname1").find("option:selected").text(),
+                    $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), true, 0);
 
-                } else {
-                    alert("数据不能为空，请重试");
-                    $('#myModal').modal("show");
+                if ($("#sel_SPname1").val() != -1) {
+                    title = $("#sel_SPname1").find("option:selected").text() + ',' +
+                        $("#sel_shiftname1").find("option:selected").text();
+                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
+                        $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
+                    titlesum = titlesum + "\n\n" + title;
                 }
-            } else {
-                var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if (scheduleobj.person_name != $("#txt_personname").val() ||
-                    scheduleobj.shift_id != $("#sel_shiftname").val() ||
-                    scheduleobj.is_master != ismaster) {
-                    $.ajax({
-                        url: '/api/person/',
-                        type: "GET",
-                        dataType: 'json',
-                        data: {
-                            name: $("#txt_personname").val(),
-                            team_id: $("#cRoleName").val(),
-                        },
-                        success: function (result) {
-                            if (result.length == 0) {
-                                alert("值班人信息不正确，请重新输入")
-                                $('#myModal').modal("show");
-                            } else {
-                                events[scheduleobj.flag - 1].person_id = result[0].id;
-                                events[scheduleobj.flag - 1].person_name = result[0].name;
-                                events[scheduleobj.flag - 1].shift_id = 10;
-                                events[scheduleobj.flag - 1].shift_name = $("#sel_shiftname").find("option:selected").text();
-                                events[scheduleobj.flag - 1].is_master = ismaster;
-                                scheduleobj.title = scheduleobj.person_name + ',' + scheduleobj.shift_name;
-                                alert("更新成功");
-                            }
-                        }
-                    });
 
+                title = $("#sel_MPname2").find("option:selected").text() + ',' +
+                    $("#sel_shiftname2").find("option:selected").text();
+                pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
+                    $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
+                titlesum = titlesum + "\n\n" + title;
+                if ($("#sel_SPname2").val() != -1) {
+                    title = $("#sel_SPname2").find("option:selected").text() + ',' +
+                        $("#sel_shiftname2").find("option:selected").text();
+                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
+                        $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
+                    titlesum = titlesum + "\n\n" + title;
                 }
-            }
-        });
-        $("#btn_detaildel").click(function () {
-
-        });
-        $("#btn_detailmodify").click(function () {
-            $("#txt_personname").val(scheduleobj.person_name);
-            $("#sel_shiftname").val(scheduleobj.shift_id);
-            if (scheduleobj.is_master == true) {
-                $('input[value="true"]').prop('checked', true).trigger('change')
+                var myevent = {
+                    title: titlesum,
+                    start: scheduleobj.date,
+                    index: index,
+                };
+                eventslist.push(list);
+                list = [];
+                index = index + 1;
+                $('#calendar').fullCalendar('renderEvent', myevent, true); // stick? = true
+                $('#calendar').fullCalendar('unselect');
             } else {
-                $('input[value="false"]').prop('checked', true).trigger('change')
+                var title = $("#sel_MPname1").find("option:selected").text() + ',' +
+                    $("#sel_shiftname1").find("option:selected").text();
+                var titlesum = title;
+                pushEvents(title, $("#sel_MPname1").val(), $("#sel_MPname1").find("option:selected").text(),
+                    $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), true, 0);
+
+                if ($("#sel_SPname1").val() != -1) {
+                    flag = flag + 1;
+                    title = $("#sel_SPname1").find("option:selected").text() + ',' +
+                        $("#sel_shiftname1").find("option:selected").text();
+                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
+                        $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
+                    titlesum = titlesum + "\n\n" + title;
+                }
+
+                title = $("#sel_MPname2").find("option:selected").text() + ',' +
+                    $("#sel_shiftname2").find("option:selected").text();
+                pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
+                    $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
+                titlesum = titlesum + "\n\n" + title;
+                if ($("#sel_SPname2").val() != -1) {
+                    flag = flag + 1;
+                    title = $("#sel_SPname2").find("option:selected").text() + ',' +
+                        $("#sel_shiftname2").find("option:selected").text();
+                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
+                        $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
+                    titlesum = titlesum + "\n\n" + title;
+                }
+                scheduleobj.title = titlesum;
+                eventslist[scheduleobj.index] = list;
+                list = [];
             }
-            $('#myModal').modal();
         });
     })
 
@@ -569,12 +627,20 @@
     function generate() {
 
         var oldlist = [];
-        for (var i = 0; i < events.length; i++) {  //循环LIST
-            var veh = events[i];//获取LIST里面的对象
-            oldlist[i] = new Date(veh.date);
+        var datalist = [];
+        var k=0;
+        for (var i = 0; i < eventslist.length; i++) {
+            for (var j = 0; j < eventslist[i].length; j++) {
+                datalist.push(eventslist[i][j]);
+                oldlist[k] = new Date(eventslist[i][j].date);
+                k++;
+            }
         }
         //先去重
         var newlist = oldlist.unique3();
+        alert(newlist.length)
+        alert(oldlist.length)
+        alert(datalist.length)
         if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
             return
@@ -596,7 +662,7 @@
         }
 // 比较时间戳是否一致
         var params = {
-            list: events
+            list: datalist
         };
         $.ajax({
             url: /generate/,

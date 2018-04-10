@@ -18,7 +18,7 @@
 
     <link href='/static/css/fullcalendar.min.css' rel='stylesheet'/>
     <link href='static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
-    <script src='/static/jquery//moment.min.js'></script>
+    <script src='/static/jquery/moment.min.js'></script>
     <script src='/static/js/fullcalendar.min.js'></script>
     <!-- Demo page code -->
 
@@ -140,7 +140,7 @@
     <ul class="breadcrumb">
         <li><a href="index.html">Home</a> <span class="divider">/</span></li>
         <li> 排班表 <span class="divider">/</span></li>
-        <select class="form-control s_center" id="cRoleName" name="cRoleName">
+        <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
     </ul>
 
@@ -162,9 +162,9 @@
                     <div class="modal-body">
 
                         <div class="form-group">
-                            <label for="txt_personname">值班人姓名</label>
-                            <input type="text" name="txt_personname" class="form-control" id="txt_personname"
-                                   placeholder="值班人姓名">
+                            <label for="txt_MPname1">值班人姓名</label>
+                            <select class="form-control" id="sel_Pname" name="sel_Pname">
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="txt_shiftname">班次</label>
@@ -240,7 +240,7 @@
     </div>
 </div>
 <script type="text/javascript">
-    function start() {
+    function startTeam() {
         $.ajax({
             url: '/api/team/',
             type: "GET",
@@ -248,7 +248,7 @@
             dataType: 'json',
             data: {},
             success: function (data) {
-                var ddl = $("#cRoleName");
+                var ddl = $("#sel_teamname");
                 //删除节点
                 RemoveOption();
                 //转成Json对象
@@ -272,20 +272,16 @@
     }
 
     function RemoveOption() {
-        $("#cRoleName option").remove();
+        $("#sel_teamname option").remove();
     }
 
-    $(function () {
-        start();
-        $("#cRoleName option:first").prop("selected", 'selected');
-        start1();
-        $("#sel_shiftname option:first").prop("selected", 'selected');
-    });
-    $("#cRoleName").change(function () {
+    $("#sel_teamname").change(function () {
         $('#calendar').fullCalendar('refetchEvents');
+        startPerson();
+        $("#sel_Pname option:first").prop("selected", 'selected');
     });
 
-    function start1() {
+    function startShift() {
         $.ajax({
             url: '/api/shift/',
             type: "GET",
@@ -299,7 +295,8 @@
                 var result = eval(data);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
-                    var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    var opt = "<option value='" + result[key].id + "'>" + result[key].name +
+                        "(" + result[key].time + ")</option>";
                     ddl.append(opt);
                 });
 
@@ -321,6 +318,47 @@
 
     $("#sel_shiftname").change(function () {
 
+    });
+
+    function startPerson() {
+        $.ajax({
+            url: '/api/person/',
+            type: "GET",
+            dataType: 'json',
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
+            success: function (data) {
+                var ddl1 = $("#sel_Pname");
+                var opt = '';
+                //删除节点
+                $("#sel_Pname option").remove();
+                //转成Json对象
+                var result = eval(data);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
+                    opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    ddl1.append(opt);
+                });
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
+    }
+
+    $(function () {
+        startTeam();
+        $("#sel_teamname option:first").prop("selected", 'selected');
+        startShift();
+        $("#sel_shiftname option:first").prop("selected", 'selected');
+        startPerson();
+        $("#sel_Pname option:first").prop("selected", 'selected');
     });
 </script>
 <script>
@@ -376,23 +414,27 @@
                 scheduleobj = new Object();
                 scheduleobj.date = newstart;
                 $('input[value="true"]').prop('checked', true).trigger('change');
+                $("#myModalLabel").text("新增");
                 $('#myModal').modal();
                 $('#myModal').on('hidden.bs.modal', function () {
                     // 执行一些动作...
-                    $("#txt_personname").val('');
-                    $("#sel_shiftname option:first").prop("selected", 'selected');
-                    $('input[value="true"]').prop('checked', true).trigger('change');
-                    if (scheduleobj.person_name != null) {
-                        var title = scheduleobj.person_name + ',' + scheduleobj.shift_name;
-                        var eventData;
-                        if (title) {
-                            eventData = {
-                                title: title,
-                                start: start,
-                                scheduleobj: scheduleobj,
-                                end: end
-                            };
-                            $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                    if ($("#myModalLabel").text() == '新增') {
+                        $("#sel_Pname option:first").prop("selected", 'selected');
+                        $("#sel_shiftname option:first").prop("selected", 'selected');
+                        $('input[value="true"]').prop('checked', true).trigger('change');
+                        if (scheduleobj.person_name != null) {
+                            var title = scheduleobj.person_name + ',' +
+                                $("#sel_shiftname option[value='" + scheduleobj.shift_id + "']").text();
+                            var eventData;
+                            if (title) {
+                                eventData = {
+                                    title: title,
+                                    start: start,
+                                    scheduleobj: scheduleobj,
+                                    end: end
+                                };
+                                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                            }
                         }
                     }
                     $('#calendar').fullCalendar('unselect');
@@ -406,7 +448,7 @@
                     type: "GET",
                     dataType: 'json',
                     data: {
-                        team_id: $("#cRoleName").val(),
+                        team_id: $("#sel_teamname").val(),
                         year: date.getFullYear(),
                         month: date.getMonth() + 1
                     },
@@ -415,7 +457,8 @@
                         $.each(data, function (index, value) {
                             events.push({
                                 scheduleobj: value,
-                                title: value.person_name + ',' + value.shift_name,
+                                title: value.person_name + ',' +
+                                $("#sel_shiftname option[value='" + value.shift_id + "']").text(),
                                 start: value.date
                             });
                         });
@@ -448,9 +491,15 @@
                             $('#detail').modal();
                             $('#myModal').on('hide.bs.modal', function () {
                                 // 执行一些动作...
-                                event.title = $("#txt_personname").val() + ',' + $("#sel_shiftname").find("option:selected").text();
-                                //更新日程对象信息
-                                $('#calendar').fullCalendar('updateEvent', event);
+                                if ($("#myModalLabel").text() == '更新') {
+                                    event.title = $("#sel_Pname").find("option:selected").text() + ',' +
+                                        $("#sel_shiftname").find("option:selected").text();
+                                    //更新日程对象信息
+                                    $('#calendar').fullCalendar('updateEvent', event);
+                                }
+                                $("#sel_Pname option:first").prop("selected", 'selected');
+                                $("#sel_shiftname option:first").prop("selected", 'selected');
+                                $('input[value="true"]').prop('checked', true).trigger('change');
                             })
                         }
                     }
@@ -469,91 +518,53 @@
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if ($("#txt_personname").val() != '') {
-                    $.ajax({
-                        url: '/api/person/',
-                        type: "GET",
-                        dataType: 'json',
-                        data: {
-                            name: $("#txt_personname").val(),
-                            team_id: $("#cRoleName").val(),
-                        },
-                        success: function (result) {
-                            if (result.length == 0) {
-                                alert("值班人不存在，请重新输入")
-                                $('#myModal').modal("show");
-                            } else {
-                                $.ajax({
-                                    url: '/api/schedule/',
-                                    type: "POST",
-                                    dataType: 'json',
-                                    data: {
-                                        team_id: $("#cRoleName").val(),
-                                        date: scheduleobj.date,
-                                        person_id: result[0].id,
-                                        person_name: result[0].name,
-                                        shift_id: $("#sel_shiftname").val(),
-                                        shift_name: $("#sel_shiftname").find("option:selected").text(),
-                                        is_master: ismaster
-                                    },
-                                    success: function (result) {
-                                        if (result) {
-                                            scheduleobj = result;
-                                            alert("添加成功");
-                                        } else {
-                                            alert("添加失败，请重试");
-                                            $('#myModal').modal("show");
-                                        }
-                                    }
-                                });
-                            }
+                $.ajax({
+                    url: '/api/schedule/',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        team_id: $("#sel_teamname").val(),
+                        date: scheduleobj.date,
+                        person_id: $("#sel_Pname").val(),
+                        person_name: $("#sel_Pname").find("option:selected").text(),
+                        shift_id: $("#sel_shiftname").val(),
+                        shift_name: $("#sel_shiftname").find("option:selected").text(),
+                        is_master: ismaster
+                    },
+                    success: function (result) {
+                        if (result) {
+                            scheduleobj = result;
+                            alert("添加成功");
+                        } else {
+                            alert("添加失败，请重试");
+                            $('#myModal').modal("show");
                         }
-                    });
-
-                } else {
-                    alert("数据不能为空，请重试");
-                    $('#myModal').modal("show");
-                }
+                    }
+                });
             } else {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if (scheduleobj.person_name != $("#txt_personname").val() ||
+                if (scheduleobj.person_id != $("#sel_Pname").val() ||
                     scheduleobj.shift_id != $("#sel_shiftname").val() ||
                     scheduleobj.is_master != ismaster) {
                     $.ajax({
-                        url: '/api/person/',
-                        type: "GET",
+                        url: '/api/schedule/' + scheduleobj.id + '/',
+                        type: "put",
                         dataType: 'json',
                         data: {
-                            name: $("#txt_personname").val(),
-                            team_id: $("#cRoleName").val(),
+                            team_id: scheduleobj.team_id,
+                            date: scheduleobj.date,
+                            person_id: $("#sel_Pname").val(),
+                            person_name: $("#sel_Pname").find("option:selected").text(),
+                            shift_id: $("#sel_shiftname").val(),
+                            shift_name: $("#sel_shiftname").find("option:selected").text(),
+                            is_master: ismaster
                         },
                         success: function (result) {
-                            if (result.length == 0) {
-                                alert("值班人不正确，请重新输入")
-                                $('#myModal').modal("show");
+                            if (result) {
+                                alert("更新成功");
                             } else {
-                                $.ajax({
-                                    url: '/api/schedule/' + scheduleobj.id + '/',
-                                    type: "put",
-                                    dataType: 'json',
-                                    data: {
-                                        team_id: scheduleobj.team_id,
-                                        date: scheduleobj.date,
-                                        person_id: result[0].id,
-                                        person_name: result[0].name,
-                                        shift_id: $("#sel_shiftname").val(),
-                                        shift_name: $("#sel_shiftname").find("option:selected").text(),
-                                        is_master: ismaster
-                                    },
-                                    success: function (result) {
-                                        if (result) {
-                                            alert("更新成功");
-                                        } else {
-                                            alert("更新失败，请重试");
-                                            $('#myModal').modal("show");
-                                        }
-                                    }
-                                });
+                                alert("更新失败，请重试");
+                                $('#myModal').modal("show");
                             }
                         }
                     });
@@ -575,7 +586,7 @@
         });
         $("#btn_detailmodify").click(function () {
             $("#myModalLabel").text("更新");
-            $("#txt_personname").val(scheduleobj.person_name);
+            $("#sel_Pname").val(scheduleobj.person_id);
             $("#sel_shiftname").val(scheduleobj.shift_id);
             if (scheduleobj.is_master == true) {
                 $('input[value="true"]').prop('checked', true).trigger('change')
