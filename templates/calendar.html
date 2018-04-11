@@ -489,17 +489,17 @@
                             }
                             scheduleobj = event.scheduleobj;
                             $('#detail').modal();
-                            $('#myModal').on('hide.bs.modal', function () {
+                            $('#myModal').on('hidden.bs.modal', function () {
                                 // 执行一些动作...
                                 if ($("#myModalLabel").text() == '更新') {
                                     event.title = $("#sel_Pname").find("option:selected").text() + ',' +
                                         $("#sel_shiftname").find("option:selected").text();
                                     //更新日程对象信息
                                     $('#calendar').fullCalendar('updateEvent', event);
+                                    $("#sel_Pname option:first").prop("selected", 'selected');
+                                    $("#sel_shiftname option:first").prop("selected", 'selected');
+                                    $('input[value="true"]').prop('checked', true).trigger('change');
                                 }
-                                $("#sel_Pname option:first").prop("selected", 'selected');
-                                $("#sel_shiftname option:first").prop("selected", 'selected');
-                                $('input[value="true"]').prop('checked', true).trigger('change');
                             })
                         }
                     }

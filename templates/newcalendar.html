@@ -371,6 +371,7 @@
             }
         });
     }
+
     $("#sel_teamname").change(function () {
         $('#calendar').fullCalendar('refetchEvents');
         startPerson();
@@ -502,13 +503,13 @@
                         event.title = scheduleobj.title;
                         //更新日程对象信息
                         $('#calendar').fullCalendar('updateEvent', event);
+                        $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                        $("#sel_MPname1 option:first").prop("selected", 'selected');
+                        $("#sel_SPname1 option:first").prop("selected", 'selected');
+                        $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                        $("#sel_MPname2 option:first").prop("selected", 'selected');
+                        $("#sel_SPname2 option:first").prop("selected", 'selected');
                     }
-                    $("#sel_shiftname1 option:first").prop("selected", 'selected');
-                    $("#sel_MPname1 option:first").prop("selected", 'selected');
-                    $("#sel_SPname1 option:first").prop("selected", 'selected');
-                    $("#sel_shiftname2 option:first").prop("selected", 'selected');
-                    $("#sel_MPname2 option:first").prop("selected", 'selected');
-                    $("#sel_SPname2 option:first").prop("selected", 'selected');
                 })
             }
         });
@@ -543,20 +544,20 @@
                         $("#sel_shiftname1").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
                         $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
                 pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
                     $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
-                titlesum = titlesum + "\n\n" + title;
+                titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
                         $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
                 var myevent = {
                     title: titlesum,
@@ -576,26 +577,24 @@
                     $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), true, 0);
 
                 if ($("#sel_SPname1").val() != -1) {
-                    flag = flag + 1;
                     title = $("#sel_SPname1").find("option:selected").text() + ',' +
                         $("#sel_shiftname1").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
                         $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
                 pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
                     $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
-                titlesum = titlesum + "\n\n" + title;
+                titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
-                    flag = flag + 1;
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
                         $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
                 scheduleobj.title = titlesum;
                 eventslist[scheduleobj.index] = list;
@@ -628,7 +627,7 @@
 
         var oldlist = [];
         var datalist = [];
-        var k=0;
+        var k = 0;
         for (var i = 0; i < eventslist.length; i++) {
             for (var j = 0; j < eventslist[i].length; j++) {
                 datalist.push(eventslist[i][j]);
