@@ -543,20 +543,20 @@
                         $("#sel_shiftname1").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
                         $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
                 pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
                     $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
-                titlesum = titlesum + "\n\n" + title;
+                titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
                         $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
                 var myevent = {
                     title: titlesum,
@@ -581,21 +581,21 @@
                         $("#sel_shiftname1").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
                         $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
                 pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
                     $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
-                titlesum = titlesum + "\n\n" + title;
+                titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
                     flag = flag + 1;
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
                     pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
                         $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
-                    titlesum = titlesum + "\n\n" + title;
+                    titlesum = titlesum + "\n" + title;
                 }
                 scheduleobj.title = titlesum;
                 eventslist[scheduleobj.index] = list;
@@ -638,9 +638,6 @@
         }
         //先去重
         var newlist = oldlist.unique3();
-        alert(newlist.length)
-        alert(oldlist.length)
-        alert(datalist.length)
         if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
             return
@@ -678,7 +675,7 @@
             }
         });
         alert("生成成功");
-        window.location.href = "/home/";
+        //window.location.href = "/home/";
     }
 </script>
 </body>
