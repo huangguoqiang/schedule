@@ -637,9 +637,6 @@
         }
         //先去重
         var newlist = oldlist.unique3();
-        alert(newlist.length)
-        alert(oldlist.length)
-        alert(datalist.length)
         if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
             return
@@ -677,7 +674,7 @@
             }
         });
         alert("生成成功");
-        window.location.href = "/home/";
+        //window.location.href = "/home/";
     }
 </script>
 </body>
