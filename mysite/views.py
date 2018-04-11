@@ -37,7 +37,7 @@ def team(request):
 
 
 def get_health(request):
-    return HttpResponse(json.dumps({'status': 'UP'}),content_type="application/json")
+    return HttpResponse(json.dumps({'status': 'UP'}), content_type="application/json")
 
 
 # schedule view

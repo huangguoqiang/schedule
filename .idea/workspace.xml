@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ebdb4386-75c1-4287-a7dc-bd2eb8489834" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calendar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/newcalendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/newcalendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mysite/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/views.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -32,8 +31,8 @@
       <file leaf-file-name="fullcalendar.min.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/static/css/fullcalendar.min.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="9" column="63" lean-forward="true" selection-start-line="9" selection-start-column="63" selection-end-line="9" selection-end-column="63" />
+            <state relative-caret-position="243">
+              <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -41,8 +40,8 @@
       <file leaf-file-name="newcalendar.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
-              <caret line="559" column="43" lean-forward="true" selection-start-line="559" selection-start-column="43" selection-end-line="559" selection-end-column="43" />
+            <state relative-caret-position="193">
+              <caret line="647" column="24" selection-start-line="647" selection-start-column="24" selection-end-line="647" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -68,8 +67,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mysite/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="876">
-              <caret line="114" lean-forward="true" selection-start-line="114" selection-end-line="114" />
+            <state relative-caret-position="2415">
+              <caret line="114" selection-start-line="114" selection-end-line="114" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -80,8 +79,8 @@
       <file leaf-file-name="calendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/calendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2160">
-              <caret line="500" column="101" selection-start-line="500" selection-start-column="101" selection-end-line="500" selection-end-column="101" />
+            <state relative-caret-position="216">
+              <caret line="428" column="40" selection-start-line="428" selection-start-column="40" selection-end-line="428" selection-end-column="40" />
             </state>
           </provider>
         </entry>
@@ -136,7 +135,6 @@
       <find>sel_shiftname1</find>
       <find>fc-content</find>
       <find>sel_shiftname</find>
-      <find>flag</find>
       <find>value</find>
       <find>txt_personname</find>
       <find>txt_MPname1</find>
@@ -147,6 +145,7 @@
       <find>cRoleName</find>
       <find>cR</find>
       <find>events</find>
+      <find>flag</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -175,10 +174,10 @@
         <option value="$PROJECT_DIR$/mysite/static/css/fullcalendar.min.css" />
         <option value="$PROJECT_DIR$/mysite/models.py" />
         <option value="$PROJECT_DIR$/static/css/fullcalendar.min.css" />
-        <option value="$PROJECT_DIR$/mysite/views.py" />
         <option value="$PROJECT_DIR$/templates/calendar.html" />
         <option value="$PROJECT_DIR$/Schedule/settings.py" />
         <option value="$PROJECT_DIR$/templates/newcalendar.html" />
+        <option value="$PROJECT_DIR$/mysite/views.py" />
       </list>
     </option>
   </component>
@@ -416,7 +415,7 @@
       <window_info anchor="bottom" id="Database Changes" order="13" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32960325" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32857144" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32857144" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
@@ -765,10 +764,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="432">
+          <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mysite/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="876">
-          <caret line="114" lean-forward="true" selection-start-line="114" selection-end-line="114" />
+        <state relative-caret-position="2415">
+          <caret line="114" selection-start-line="114" selection-end-line="114" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
@@ -777,29 +783,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/static/css/fullcalendar.min.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret line="9" column="63" lean-forward="true" selection-start-line="9" selection-start-column="63" selection-end-line="9" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
+        <state relative-caret-position="243">
+          <caret line="18" column="5" lean-forward="true" selection-start-line="18" selection-start-column="5" selection-end-line="18" selection-end-column="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/calendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2160">
-          <caret line="500" column="101" selection-start-line="500" selection-start-column="101" selection-end-line="500" selection-end-column="101" />
+        <state relative-caret-position="216">
+          <caret line="428" column="40" selection-start-line="428" selection-start-column="40" selection-end-line="428" selection-end-column="40" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
-          <caret line="559" column="43" lean-forward="true" selection-start-line="559" selection-start-column="43" selection-end-line="559" selection-end-column="43" />
+        <state relative-caret-position="193">
+          <caret line="647" column="24" selection-start-line="647" selection-start-column="24" selection-end-line="647" selection-end-column="24" />
         </state>
       </provider>
     </entry>
