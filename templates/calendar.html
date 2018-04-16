@@ -408,6 +408,7 @@
             {#editable: true,#}
             eventLimit: true, // allow "more" link when too many events
             selectable: true,
+            eventOrder: 'order',
             select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                 console.log("↓↓↓select↓↓↓");
                 var newstart = start.format("YYYY-MM-DD");
@@ -459,6 +460,7 @@
                                 scheduleobj: value,
                                 title: value.person_name + ',' +
                                 $("#sel_shiftname option[value='" + value.shift_id + "']").text(),
+                                order: index,
                                 start: value.date
                             });
                         });
