@@ -10,17 +10,17 @@
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-    <link rel="stylesheet" type="text/css" href="/static/css/theme.css">
-    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
+    <link rel="stylesheet" href="../static/css/font-awesome.css">
 
-    <script src="/static/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="../static/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         var teamobj = '';
 
         function getteam() {
             $.ajax({
-                url: '/api/team/',
+                url: '../api/team/',
                 type: "GET",
                 dataType: 'json',
                 data: {},
@@ -51,7 +51,7 @@
         function update(id) {
             teamobj = new Object();
             $.ajax({
-                url: '/api/team/',
+                url: '../api/team/',
                 type: "GET",
                 dataType: 'json',
                 data: {
@@ -70,7 +70,7 @@
 
         function deleteteam(id) {
             $.ajax({
-                url: '/api/team/' + id,
+                url: '../api/team/' + id,
                 type: "delete",
                 dataType: 'json',
                 data: {},
@@ -85,7 +85,7 @@
             if ($("#myModalLabel").text() == '新增') {
                 if ($("#txt_name").val() != '' && $("#txt_time").val() != '') {
                     $.ajax({
-                        url: '/api/team/',
+                        url: '../api/team/',
                         type: "POST",
                         dataType: 'json',
                         data: {
@@ -110,7 +110,7 @@
             } else {
                 if (teamobj.name != $("#txt_name").val() || teamobj.description != $("#txt_desc").val()) {
                     $.ajax({
-                        url: '/api/team/' + teamobj.id + '/',
+                        url: '../api/team/' + teamobj.id + '/',
                         type: "put",
                         dataType: 'json',
                         data: {
@@ -244,11 +244,11 @@
 
     <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
     <ul id="dashboard-menu" class="nav nav-list collapse in">
-        <li><a href="/home">排班表</a></li>
-        <li><a href="/users">值班人员管理</a></li>
-        <li><a href="/shift">班次管理</a></li>
-        <li><a href="/team">值班组管理</a></li>
-        <li><a href="/calendar">生成排班表</a></li>
+        <li><a href="../home">排班表</a></li>
+        <li><a href="../users">值班人员管理</a></li>
+        <li><a href="../shift">班次管理</a></li>
+        <li><a href="../team">值班组管理</a></li>
+        <li><a href="../calendar">生成排班表</a></li>
 
     </ul>
 
@@ -270,7 +270,7 @@
     </div>
 
     <ul class="breadcrumb">
-        <li><a href="index.html">Home</a> <span class="divider">/</span></li>
+        <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li class="active">值班组管理</li>
     </ul>
 

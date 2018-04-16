@@ -10,16 +10,16 @@
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-    <link rel="stylesheet" type="text/css" href="/static/css/theme.css">
-    <link rel="stylesheet" href="/static/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
+    <link rel="stylesheet" href="../static/css/font-awesome.css">
 
-    <script src="/static/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="../static/jquery/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-    <link href='/static/css/fullcalendar.min.css' rel='stylesheet'/>
-    <link href='static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
-    <script src='/static/jquery/moment.min.js'></script>
-    <script src='/static/js/fullcalendar.min.js'></script>
+    <link href='../static/css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='../static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <script src='../static/jquery/moment.min.js'></script>
+    <script src='../static/js/fullcalendar.min.js'></script>
     <!-- Demo page code -->
 
     <style type="text/css">
@@ -61,7 +61,7 @@
     <![endif]-->
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="/static/images/favicon.ico">
+    <link rel="shortcut icon" href="../static/images/favicon.ico">
 </head>
 
 <!--[if lt IE 7 ]> <body class="ie ie6"> <![endif]-->
@@ -106,11 +106,11 @@
 
     <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
     <ul id="dashboard-menu" class="nav nav-list collapse in">
-        <li><a href="/home">排班表</a></li>
-        <li><a href="/users">值班人员管理</a></li>
-        <li><a href="/shift">班次管理</a></li>
-        <li><a href="/team">值班组管理</a></li>
-        <li><a href="/calendar">生成排班表</a></li>
+        <li><a href="../home">排班表</a></li>
+        <li><a href="../users">值班人员管理</a></li>
+        <li><a href="../shift">班次管理</a></li>
+        <li><a href="../team">值班组管理</a></li>
+        <li><a href="../calendar">生成排班表</a></li>
 
     </ul>
 
@@ -138,7 +138,7 @@
     </div>
 
     <ul class="breadcrumb">
-        <li><a href="index.html">Home</a> <span class="divider">/</span></li>
+        <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li> 排班表 <span class="divider">/</span></li>
         <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
@@ -242,7 +242,7 @@
 <script type="text/javascript">
     function startTeam() {
         $.ajax({
-            url: '/api/team/',
+            url: '../api/team/',
             type: "GET",
             async: false,
             dataType: 'json',
@@ -283,7 +283,7 @@
 
     function startShift() {
         $.ajax({
-            url: '/api/shift/',
+            url: '../api/shift/',
             type: "GET",
             dataType: 'json',
             data: {},
@@ -322,7 +322,7 @@
 
     function startPerson() {
         $.ajax({
-            url: '/api/person/',
+            url: '../api/person/',
             type: "GET",
             dataType: 'json',
             data: {
@@ -444,7 +444,7 @@
             events: function (start, end, timezone, callback) {
                 var date = new Date(this.getDate())
                 $.ajax({
-                    url: '/api/schedule/list_by_date/',
+                    url: '../api/schedule/list_by_date/',
                     type: "GET",
                     dataType: 'json',
                     data: {
@@ -469,7 +469,7 @@
             eventClick: function (event, element) {
                 scheduleobj = new Object();
                 $.ajax({
-                    url: '/api/person/',
+                    url: '../api/person/',
                     type: "GET",
                     dataType: 'json',
                     data: {
@@ -519,7 +519,7 @@
             if ($("#myModalLabel").text() == '新增') {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());
                 $.ajax({
-                    url: '/api/schedule/',
+                    url: '../api/schedule/',
                     type: "POST",
                     dataType: 'json',
                     data: {
@@ -547,7 +547,7 @@
                     scheduleobj.shift_id != $("#sel_shiftname").val() ||
                     scheduleobj.is_master != ismaster) {
                     $.ajax({
-                        url: '/api/schedule/' + scheduleobj.id + '/',
+                        url: '../api/schedule/' + scheduleobj.id + '/',
                         type: "put",
                         dataType: 'json',
                         data: {
@@ -574,7 +574,7 @@
         });
         $("#btn_detaildel").click(function () {
             $.ajax({
-                url: '/api/schedule/' + scheduleobj.id,
+                url: '../api/schedule/' + scheduleobj.id,
                 type: "delete",
                 dataType: 'json',
                 data: {},
