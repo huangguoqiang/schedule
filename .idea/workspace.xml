@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ebdb4386-75c1-4287-a7dc-bd2eb8489834" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Schedule/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Schedule/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/newcalendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/newcalendar.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,8 +34,8 @@
       <file leaf-file-name="newcalendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
-              <caret line="660" column="26" selection-start-line="660" selection-start-column="18" selection-end-line="660" selection-end-column="26" />
+            <state relative-caret-position="324">
+              <caret line="641" column="30" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -685,8 +685,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="660" column="26" selection-start-line="660" selection-start-column="18" selection-end-line="660" selection-end-column="26" />
+        <state relative-caret-position="324">
+          <caret line="641" column="30" selection-start-line="641" selection-start-column="30" selection-end-line="641" selection-end-column="30" />
         </state>
       </provider>
     </entry>

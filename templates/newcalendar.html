@@ -639,6 +639,7 @@
         var newlist = oldlist.unique3();
         if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
+            location.reload();
             return
         }
         // 先排序，然后转时间戳
@@ -646,7 +647,7 @@
             newlist[i].setDate(newlist[i].getDate() + 4 - i);
         }
         var flag = true;
-        for (var i = 0; i <=newlist.length; i++) {
+        for (var i = 0; i <newlist.length-1; i++) {
             if ((newlist[i] - newlist[i+1]) != 0) {
                 flag = false;
             }
