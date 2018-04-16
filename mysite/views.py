@@ -117,7 +117,7 @@ def generate(request):
             new_schedule_obj.save()
             j = j + 1
         i = i + 1
-    return render(request, 'calendar.html')
+    return HttpResponse(request)
 
 
 def get_schedule(request):

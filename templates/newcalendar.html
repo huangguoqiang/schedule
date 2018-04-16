@@ -304,7 +304,7 @@
 
     function startPerson() {
         $.ajax({
-            url: '..api/person/',
+            url: '../api/person/',
             type: "GET",
             dataType: 'json',
             data: {
@@ -668,13 +668,13 @@
             contentType: 'application/json',
             success: function (data) {
                 alert("生成成功");
+                window.location.href = "../home/";
             },
             error: function (data, status, er) {
                 console.log(data);
             }
         });
-        alert("生成成功");
-        window.location.href = "../home/";
+
     }
 </script>
 </body>
