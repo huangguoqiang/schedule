@@ -646,8 +646,8 @@
             newlist[i].setDate(newlist[i].getDate() + 4 - i);
         }
         var flag = true;
-        for (var i = 1; i < newlist.length; i++) {
-            if ((newlist[0] - newlist[i]) != 0) {
+        for (var i = 0; i <=newlist.length; i++) {
+            if ((newlist[i] - newlist[i+1]) != 0) {
                 flag = false;
             }
         }
