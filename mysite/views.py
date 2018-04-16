@@ -90,7 +90,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 def generate(request):
-    schedulelist = json.loads(request.body)
+    schedulelist = json.loads(request.body.decode('utf-8'))
     mist = schedulelist['list']
     i = 0
     num = len(mist)
