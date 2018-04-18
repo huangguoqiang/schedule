@@ -1,8 +1,6 @@
-import calendar
 import datetime
 import time
 import json
-from django.core import serializers
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from mysite.serializers import *
+import copy
 
 
 # Create your views here.
@@ -54,7 +53,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         date_from = datetime.datetime(y, m, 1, 0, 0)
         date_to = datetime.datetime(y, m, mdays[m], 0, 0)
-        queryset = self.filter_queryset(self.get_queryset().filter(date__range=(date_from, date_to)))
+        queryset = self.filter_queryset(self.get_queryset().filter(date__range=(date_from, date_to), is_base=False))
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -77,52 +76,83 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 
 
 @csrf_exempt
+def auto_generate(request):
+    team_id = request.POST['team_id']
+    lastest_obj = Schedule.objects.filter(team_id=team_id, is_base=False).order_by('-date').first()
+    queryset_base = Schedule.objects.filter(team_id=team_id, is_base=True).all()
+    sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
+    i = 0
+    while i < 11:
+        for obj in queryset_base:
+            item = copy.copy(obj)
+            item.date = item.date + sub + datetime.timedelta(days=i * 8)
+            print(item.date)
+            new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
+                                                       person_id=item.person_id, person_name=item.person_name,
+                                                       shift_id=item.shift_id, shift_name=item.shift_name,
+                                                       is_master=item.is_master, is_base=False)
+            new_schedule_obj.save()
+        i = i + 1
+
+    return HttpResponse(request)
+
+
+@csrf_exempt
+def auto_generate_everyday(request):
+    queryset_team = Team.objects.all()
+    for obj_team in queryset_team:
+        lastest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=False).order_by('-date').first()
+        if lastest_obj is not None:
+            queryset_base = Schedule.objects.filter(team_id=obj_team.id, is_base=True).all()
+            sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
+            if sub < datetime.timedelta(days=97):
+                for obj in queryset_base:
+                    item = copy.copy(obj)
+                    item.date = item.date + sub
+                    new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
+                                                               person_id=item.person_id, person_name=item.person_name,
+                                                               shift_id=item.shift_id, shift_name=item.shift_name,
+                                                               is_master=item.is_master, is_base=False)
+                    new_schedule_obj.save()
+    return HttpResponse(request)
+
+
+@csrf_exempt
 def generate(request):
-    schedulelist = json.loads(request.body.decode('utf-8'))
-    mist = schedulelist['list']
+    schedule_list = json.loads(request.body.decode('utf-8'))
+    mist = schedule_list['list']
     i = 0
     num = len(mist)
-    oldestdate = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
-    teamid = mist[0]['team_id']
-
+    oldest_date = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
+    team_id = mist[0]['team_id']
+    Schedule.objects.filter(team_id=team_id, is_base=True).delete()
     while i < num:
-        item = mist[i].copy()
-        item['date'] = datetime.datetime.strptime(item['date'], '%Y-%m-%d')
-        if oldestdate > item['date']:
-            oldestdate = item['date']
+        mist[i]['date'] = datetime.datetime.strptime(mist[i]['date'], '%Y-%m-%d')
+        new_schedule_base_obj = Schedule.objects.create(team_id=mist[i]['team_id'], person_id=mist[i]['person_id'],
+                                                        date=mist[i]['date'],
+                                                        person_name=mist[i]['person_name'],
+                                                        shift_id=mist[i]['shift_id'],
+                                                        shift_name=mist[i]['shift_name'],
+                                                        is_master=mist[i]['is_master'], is_base=True)
+        new_schedule_base_obj.save()
+        if oldest_date > mist[i]['date']:
+            oldest_date = mist[i]['date']
         i = i + 1
-    Schedule.objects.filter(team_id=teamid).filter(date__gte=oldestdate).delete()
+    Schedule.objects.filter(team_id=team_id, is_base=False).filter(date__gte=oldest_date).delete()
     i = 0
     while i < 12:
         j = 0
         while j < num:
             item = mist[j].copy()
-            item['date'] = datetime.datetime.strptime(item['date'], '%Y-%m-%d') + datetime.timedelta(days=i * 8)
+            item['date'] = item['date'] + datetime.timedelta(days=i * 8)
             new_schedule_obj = Schedule.objects.create(team_id=item['team_id'], date=item['date'],
                                                        person_id=item['person_id'], person_name=item['person_name'],
                                                        shift_id=item['shift_id'], shift_name=item['shift_name'],
-                                                       is_master=item['is_master'])
+                                                       is_master=item['is_master'], is_base=False)
             new_schedule_obj.save()
             j = j + 1
         i = i + 1
     return HttpResponse(request)
-
-
-def get_schedule(request):
-    print(request.POST, '*****||||')
-    # y = request.POST['year']
-    # m = request.POST['month']
-    y = 2018
-    m = 4
-    print(y, m)
-    # team_id = request.POST['team_id']
-    team_id = 100
-    print(team_id)
-    date_from = datetime.datetime(int(y), int(m), 1, 0, 0)
-    date_to = datetime.datetime(int(y), int(m), calendar.mdays[m], 0, 0)
-    return_data_json = serializers.serialize('json', Schedule.objects.filter(team_id=team_id).filter(
-        date__range=(date_from, date_to)))
-    return HttpResponse(return_data_json)
 
 
 # team view

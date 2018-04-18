@@ -140,6 +140,9 @@
     <ul class="breadcrumb">
         <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li> 排班表 <span class="divider">/</span></li>
+        <li class="fc-right">
+            <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 自动生成下一期排班</button>
+        </li>
         <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
     </ul>
@@ -360,6 +363,25 @@
         startPerson();
         $("#sel_Pname option:first").prop("selected", 'selected');
     });
+
+    function generate() {
+        $.ajax({
+            url: '../auto_generate/',
+            type: "POST",
+            dataType: 'json',
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
+            success: function (data) {
+                alert("生成成功");
+                window.location.href = "../home/";
+            },
+            error: function (data, status, er) {
+                console.log(data);
+            }
+        });
+
+    }
 </script>
 <script>
     $(document).ready(function () {
@@ -411,7 +433,8 @@
             eventOrder: 'order',
             select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                 console.log("↓↓↓select↓↓↓");
-                var newstart = start.format("YYYY-MM-DD");
+                var newstart = moment(start).format("YYYY-MM-DD");
+                newstart = moment(newstart).format("YYYY-MM-DDThh:mm:ss");
                 scheduleobj = new Object();
                 scheduleobj.date = newstart;
                 $('input[value="true"]').prop('checked', true).trigger('change');
@@ -427,10 +450,13 @@
                             var title = scheduleobj.person_name + ',' +
                                 $("#sel_shiftname option[value='" + scheduleobj.shift_id + "']").text();
                             var eventData;
+                            var colors = ['teal', 'green', 'fuchsia', 'purple', 'red', 'black'];
                             if (title) {
                                 eventData = {
                                     title: title,
                                     start: start,
+                                    allDay: true,
+                                    colors: colors[scheduleobj.shift_id % 6],
                                     scheduleobj: scheduleobj,
                                     end: end
                                 };
@@ -444,6 +470,7 @@
             },
             events: function (start, end, timezone, callback) {
                 var date = new Date(this.getDate())
+                // 获取当前月的数据
                 $.ajax({
                     url: '../api/schedule/list_by_date/',
                     type: "GET",
@@ -453,14 +480,25 @@
                         year: date.getFullYear(),
                         month: date.getMonth() + 1
                     },
-                    success: function (data) { // 获取当前月的数据
+                    success: function (data) {
                         var events = [];
+                        var colors = ['teal', 'green', 'fuchsia', 'purple', 'red'];
+                        var mydate = moment(date).format("YYYY-MM-DD");
+                        var color = '';
                         $.each(data, function (index, value) {
+                            if (mydate > moment(value.date).format("YYYY-MM-DD")) {
+                                color = 'black';
+
+                            } else {
+                                color = colors[value.shift_id % 5];
+                            }
                             events.push({
                                 scheduleobj: value,
                                 title: value.person_name + ',' +
                                 $("#sel_shiftname option[value='" + value.shift_id + "']").text(),
                                 order: index,
+                                allDay: true,
+                                color: color,
                                 start: value.date
                             });
                         });
@@ -508,15 +546,6 @@
                 });
             }
         });
-        //$("#txt_personname").on("input", function (evt) {
-        //   if ($(this).val().trim().length) {
-        //    $("#btn_submit").removeAttr("disabled");
-        // } else {
-        //  alert("值班人姓名不能为空，请重新输入");
-        // $("#btn_submit").prop("disabled", "disabled");
-        //}
-
-        //});
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());

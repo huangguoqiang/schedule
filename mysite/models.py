@@ -31,15 +31,16 @@ class Person(models.Model):
 
 class Schedule(models.Model):
     team_id = models.PositiveSmallIntegerField()
-    date = models.DateField()
+    date = models.DateTimeField()
     person_id = models.PositiveSmallIntegerField()
     person_name = models.CharField(max_length=30)
     shift_id = models.PositiveSmallIntegerField()
     shift_name = models.CharField(max_length=30)
     is_master = models.BooleanField()
+    is_base = models.BooleanField()
 
     def __str__(self):
-        return self.id
+        return self.person_name
 
     class Meta:
         ordering = ('date', 'id')
