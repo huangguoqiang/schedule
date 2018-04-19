@@ -11,7 +11,9 @@ class Team(models.Model):
 
 
 class Shift(models.Model):
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30)
+    team_id = models.PositiveSmallIntegerField()
+    team_name = models.CharField(max_length=30)
     time = models.CharField(max_length=30)
 
     def __str__(self):

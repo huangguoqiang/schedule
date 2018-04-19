@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
     <link rel="stylesheet" href="../static/css/font-awesome.css">
@@ -257,8 +257,15 @@
                 //转成Json对象
                 var result = eval(data);
                 //循环遍历 下拉框绑定
+                var i = 0;
                 $(result).each(function (key) {
-                    var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    //第一种方法
+                    if (i == 0) {
+                        var opt = "<option value='" + result[key].id + "' selected>" + result[key].name + "</option>";
+                    } else {
+                        var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+                    }
+                    i++;
                     ddl.append(opt);
                 });
 
@@ -282,6 +289,8 @@
         $('#calendar').fullCalendar('refetchEvents');
         startPerson();
         $("#sel_Pname option:first").prop("selected", 'selected');
+        startShift();
+        $("#sel_shiftname option:first").prop("selected", 'selected');
     });
 
     function startShift() {
@@ -289,7 +298,9 @@
             url: '../api/shift/',
             type: "GET",
             dataType: 'json',
-            data: {},
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
             success: function (data) {
                 var ddl = $("#sel_shiftname");
                 //删除节点
@@ -368,7 +379,7 @@
         $.ajax({
             url: '../auto_generate/',
             type: "POST",
-            dataType: 'json',
+            dataType: 'text',
             data: {
                 team_id: $("#sel_teamname").val(),
             },
@@ -390,7 +401,9 @@
         className: default(transparent), important(red), chill(pink), success(green), info(blue)
 
         */
-        var scheduleobj = ''
+        var envdate = '';
+        var myevent = '';
+        var colors = ['teal', 'green', 'fuchsia', 'purple', 'red'];
 
         /* initialize the external events
         -----------------------------------------------------------------*/
@@ -435,41 +448,13 @@
                 console.log("↓↓↓select↓↓↓");
                 var newstart = moment(start).format("YYYY-MM-DD");
                 newstart = moment(newstart).format("YYYY-MM-DDThh:mm:ss");
-                scheduleobj = new Object();
-                scheduleobj.date = newstart;
+                envdate = newstart;
                 $('input[value="true"]').prop('checked', true).trigger('change');
                 $("#myModalLabel").text("新增");
                 $('#myModal').modal();
-                $('#myModal').on('hidden.bs.modal', function () {
-                    // 执行一些动作...
-                    if ($("#myModalLabel").text() == '新增') {
-                        $("#sel_Pname option:first").prop("selected", 'selected');
-                        $("#sel_shiftname option:first").prop("selected", 'selected');
-                        $('input[value="true"]').prop('checked', true).trigger('change');
-                        if (scheduleobj.person_name != null) {
-                            var title = scheduleobj.person_name + ',' +
-                                $("#sel_shiftname option[value='" + scheduleobj.shift_id + "']").text();
-                            var eventData;
-                            var colors = ['teal', 'green', 'fuchsia', 'purple', 'red', 'black'];
-                            if (title) {
-                                eventData = {
-                                    title: title,
-                                    start: start,
-                                    allDay: true,
-                                    colors: colors[scheduleobj.shift_id % 6],
-                                    scheduleobj: scheduleobj,
-                                    end: end
-                                };
-                                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                            }
-                        }
-                    }
-                    $('#calendar').fullCalendar('unselect');
-                })
-
             },
             events: function (start, end, timezone, callback) {
-                var date = new Date(this.getDate())
+                var date = new Date(this.getDate());
                 // 获取当前月的数据
                 $.ajax({
                     url: '../api/schedule/list_by_date/',
@@ -482,8 +467,7 @@
                     },
                     success: function (data) {
                         var events = [];
-                        var colors = ['teal', 'green', 'fuchsia', 'purple', 'red'];
-                        var mydate = moment(date).format("YYYY-MM-DD");
+                        var mydate = moment(new Date()).format("YYYY-MM-DD");
                         var color = '';
                         $.each(data, function (index, value) {
                             if (mydate > moment(value.date).format("YYYY-MM-DD")) {
@@ -507,7 +491,7 @@
                 });
             },
             eventClick: function (event, element) {
-                scheduleobj = new Object();
+                myevent = '';
                 $.ajax({
                     url: '../api/person/',
                     type: "GET",
@@ -527,25 +511,25 @@
                             } else {
                                 $('input[value="no"]').prop('checked', true).trigger('change')
                             }
-                            scheduleobj = event.scheduleobj;
+                            myevent = event;
                             $('#detail').modal();
-                            $('#myModal').on('hidden.bs.modal', function () {
-                                // 执行一些动作...
-                                if ($("#myModalLabel").text() == '更新') {
-                                    event.title = $("#sel_Pname").find("option:selected").text() + ',' +
-                                        $("#sel_shiftname").find("option:selected").text();
-                                    //更新日程对象信息
-                                    $('#calendar').fullCalendar('updateEvent', event);
-                                    $("#sel_Pname option:first").prop("selected", 'selected');
-                                    $("#sel_shiftname option:first").prop("selected", 'selected');
-                                    $('input[value="true"]').prop('checked', true).trigger('change');
-                                }
-                            })
                         }
                     }
                 });
             }
         });
+        $('#myModal').on('hidden.bs.modal', function () {
+            // 执行一些动作...
+            if ($("#myModalLabel").text() == '新增') {
+                $("#sel_Pname option:first").prop("selected", 'selected');
+                $("#sel_shiftname option:first").prop("selected", 'selected');
+                $('input[value="true"]').prop('checked', true).trigger('change');
+            } else {
+                $("#sel_Pname option:first").prop("selected", 'selected');
+                $("#sel_shiftname option:first").prop("selected", 'selected');
+                $('input[value="true"]').prop('checked', true).trigger('change');
+            }
+        })
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());
@@ -555,7 +539,7 @@
                     dataType: 'json',
                     data: {
                         team_id: $("#sel_teamname").val(),
-                        date: scheduleobj.date,
+                        date: envdate,
                         person_id: $("#sel_Pname").val(),
                         person_name: $("#sel_Pname").find("option:selected").text(),
                         shift_id: $("#sel_shiftname").val(),
@@ -564,8 +548,30 @@
                     },
                     success: function (result) {
                         if (result) {
-                            scheduleobj = result;
                             alert("添加成功");
+                            if (result.person_name != null) {
+                                var title = result.person_name + ',' +
+                                    $("#sel_shiftname option[value='" + result.shift_id + "']").text();
+                                var eventData;
+                                var mydate = moment(new Date()).format("YYYY-MM-DD");
+                                var color = '';
+                                if (mydate > moment(result.date).format("YYYY-MM-DD")) {
+                                    color = 'black';
+                                } else {
+                                    color = colors[result.shift_id % 5];
+                                }
+                                if (title) {
+                                    eventData = {
+                                        title: title,
+                                        start: result.date,
+                                        allDay: true,
+                                        color: color,
+                                        scheduleobj: result,
+                                    }
+                                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                                    $('#calendar').fullCalendar('unselect');
+                                }
+                            }
                         } else {
                             alert("添加失败，请重试");
                             $('#myModal').modal("show");
@@ -574,16 +580,16 @@
                 });
             } else {
                 var ismaster = ('true' == $("input[name='ismaster']:checked").val());
-                if (scheduleobj.person_id != $("#sel_Pname").val() ||
-                    scheduleobj.shift_id != $("#sel_shiftname").val() ||
-                    scheduleobj.is_master != ismaster) {
+                if (myevent.scheduleobj.person_id != $("#sel_Pname").val() ||
+                    myevent.scheduleobj.shift_id != $("#sel_shiftname").val() ||
+                    myevent.scheduleobj.is_master != ismaster) {
                     $.ajax({
-                        url: '../api/schedule/' + scheduleobj.id + '/',
+                        url: '../api/schedule/' + myevent.scheduleobj.id + '/',
                         type: "put",
                         dataType: 'json',
                         data: {
-                            team_id: scheduleobj.team_id,
-                            date: scheduleobj.date,
+                            team_id: myevent.scheduleobj.team_id,
+                            date: myevent.scheduleobj.date,
                             person_id: $("#sel_Pname").val(),
                             person_name: $("#sel_Pname").find("option:selected").text(),
                             shift_id: $("#sel_shiftname").val(),
@@ -593,6 +599,12 @@
                         success: function (result) {
                             if (result) {
                                 alert("更新成功");
+                                myevent.title = result.person_name + ',' + result.shift_name;
+                                //更新日程对象信息
+                                if (myevent.color != 'black') {
+                                    myevent.color = colors[result.shift_id % 5]
+                                }
+                                $('#calendar').fullCalendar('updateEvent', myevent);
                             } else {
                                 alert("更新失败，请重试");
                                 $('#myModal').modal("show");
@@ -605,7 +617,7 @@
         });
         $("#btn_detaildel").click(function () {
             $.ajax({
-                url: '../api/schedule/' + scheduleobj.id,
+                url: '../api/schedule/' + myevent.scheduleobj.id,
                 type: "delete",
                 dataType: 'json',
                 data: {},
@@ -617,9 +629,9 @@
         });
         $("#btn_detailmodify").click(function () {
             $("#myModalLabel").text("更新");
-            $("#sel_Pname").val(scheduleobj.person_id);
-            $("#sel_shiftname").val(scheduleobj.shift_id);
-            if (scheduleobj.is_master == true) {
+            $("#sel_Pname").val(myevent.scheduleobj.person_id);
+            $("#sel_shiftname").val(myevent.scheduleobj.shift_id);
+            if (myevent.scheduleobj.is_master == true) {
                 $('input[value="true"]').prop('checked', true).trigger('change')
             } else {
                 $('input[value="false"]').prop('checked', true).trigger('change')

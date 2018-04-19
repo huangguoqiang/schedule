@@ -20,7 +20,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = ('id', 'name', 'time')
+        fields = ('id', 'name', 'team_id', 'team_name', 'time')
 
 
 class PersonSerializer(serializers.ModelSerializer):

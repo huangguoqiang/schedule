@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
     <link rel="stylesheet" href="../static/css/font-awesome.css">
@@ -194,18 +194,6 @@
                             <select class="form-control" id="sel_SPname2" name="sel_SPname2">
                             </select>
                         </div>
-                        {% comment %}<div class="form-group">
-                            <label for="txt_personname">值班人姓名</label>
-                            <input type="text" name="txt_personname" class="form-control" id="txt_personname"
-                                   placeholder="值班人姓名">
-                        </div>{% endcomment %}
-                        {% comment %}<div class="form-group">
-                            <label for="txt_ismaster">是否为主值班人</label>
-                            <br>
-                            <input type="radio" name="ismaster" value="true" checked>是
-                            <br>
-                            <input type="radio" name="ismaster" value="false">否
-                        </div>{% endcomment %}
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"><span
@@ -264,7 +252,9 @@
             url: '../api/shift/',
             type: "GET",
             dataType: 'json',
-            data: {},
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
             success: function (data) {
                 var ddl = $("#sel_shiftname1");
                 //删除节点
@@ -379,12 +369,17 @@
         $("#sel_SPname1 option:first").prop("selected", 'selected');
         $("#sel_MPname2 option:first").prop("selected", 'selected');
         $("#sel_SPname2 option:first").prop("selected", 'selected');
+        startShift();
+        $("#sel_shiftname1 option:first").prop("selected", 'selected');
+        $("#sel_shiftname2 option:first").prop("selected", 'selected');
     });
 
-    $("#sel_shiftname").change(function () {
+    $("#sel_shiftname1").change(function () {
 
     });
+    $("#sel_shiftname2").change(function () {
 
+    });
     $(function () {
         startTeam();
         $("#sel_teamname option:first").prop("selected", 'selected');
@@ -453,20 +448,6 @@
                 {#$('input[value="true"]').prop('checked', true).trigger('change');#}
                 $("#myModalLabel").text("新增");
                 $('#myModal').modal();
-                $('#myModal').on('hidden.bs.modal', function () {
-                    // 执行一些动作...
-                    if ($("#myModalLabel").text() == '新增') {
-                        {#$("#txt_personname").val('');#}
-                        $("#sel_shiftname1 option:first").prop("selected", 'selected');
-                        $("#sel_MPname1 option:first").prop("selected", 'selected');
-                        $("#sel_SPname1 option:first").prop("selected", 'selected');
-                        $("#sel_shiftname2 option:first").prop("selected", 'selected');
-                        $("#sel_MPname2 option:first").prop("selected", 'selected');
-                        $("#sel_SPname2 option:first").prop("selected", 'selected');
-                        {#$('input[value="true"]').prop('checked', true).trigger('change');#}
-                    }
-                })
-
             },
             events: function (start, end, timezone, callback) {
                 callback(events);
@@ -499,17 +480,7 @@
                 $('#myModal').modal();
                 $('#myModal').on('hidden.bs.modal', function () {
                     // 执行一些动作...
-                    if ($("#myModalLabel").text() == '更新') {
-                        event.title = scheduleobj.title;
-                        //更新日程对象信息
-                        $('#calendar').fullCalendar('updateEvent', event);
-                        $("#sel_shiftname1 option:first").prop("selected", 'selected');
-                        $("#sel_MPname1 option:first").prop("selected", 'selected');
-                        $("#sel_SPname1 option:first").prop("selected", 'selected');
-                        $("#sel_shiftname2 option:first").prop("selected", 'selected');
-                        $("#sel_MPname2 option:first").prop("selected", 'selected');
-                        $("#sel_SPname2 option:first").prop("selected", 'selected');
-                    }
+
                 })
             }
         });
@@ -531,6 +502,24 @@
             });
         }
 
+        $('#myModal').on('hidden.bs.modal', function () {
+            // 执行一些动作...
+            if ($("#myModalLabel").text() == '新增') {
+                $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                $("#sel_MPname1 option:first").prop("selected", 'selected');
+                $("#sel_SPname1 option:first").prop("selected", 'selected');
+                $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                $("#sel_MPname2 option:first").prop("selected", 'selected');
+                $("#sel_SPname2 option:first").prop("selected", 'selected');
+            } else {
+                $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                $("#sel_MPname1 option:first").prop("selected", 'selected');
+                $("#sel_SPname1 option:first").prop("selected", 'selected');
+                $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                $("#sel_MPname2 option:first").prop("selected", 'selected');
+                $("#sel_SPname2 option:first").prop("selected", 'selected');
+            }
+        })
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
                 var title = $("#sel_MPname1").find("option:selected").text() + ',' +
@@ -562,6 +551,7 @@
                 var myevent = {
                     title: titlesum,
                     start: scheduleobj.date,
+                    date: scheduleobj.date,
                     index: index,
                 };
                 eventslist.push(list);
@@ -599,6 +589,8 @@
                 scheduleobj.title = titlesum;
                 eventslist[scheduleobj.index] = list;
                 list = [];
+                //更新日程对象信息
+                $('#calendar').fullCalendar('updateEvent', scheduleobj);
             }
         });
     })
@@ -644,6 +636,7 @@
         // 比较时间戳是否一致
         var flag = true;
         for (var i = 0; i < newlist.length - 1; i++) {
+            alert(newlist[i])
             if ((newlist[i] - newlist[i + 1]) != 0) {
                 flag = false;
             }

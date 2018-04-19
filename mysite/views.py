@@ -168,7 +168,7 @@ class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'name')
+    filter_fields = ('id', 'team_id', 'name')
 
 
 # person view

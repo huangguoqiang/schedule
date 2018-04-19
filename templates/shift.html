@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
     <link rel="stylesheet" href="../static/css/font-awesome.css">
@@ -27,8 +27,8 @@
                 success: function (data) {
                     var tbBody = ""
                     $.each(data, function (index, value) {
-                        tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + value.name + "</td>" + "<td>"
-                            + value.time + "</td><td>" +
+                        tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + value.team_name + "</td>" +
+                            "<td>" + value.name + "</td>" + "<td>" + value.time + "</td><td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
                             '<a href="#" onclick = deleteshift(' + value.id +
                             ') role="button" data-toggle="modal"><i class="icon-remove"></i></a>' +
@@ -43,6 +43,7 @@
             $('#myModal').modal();
             $('#myModal').on('hidden.bs.modal', function () {
                 // 执行一些动作...
+                $("#sel_teamname option:first").prop("selected", 'selected');
                 $("#txt_name").val('');
                 $("#txt_time").val('');
             })
@@ -59,6 +60,7 @@
                 },
                 success: function (result) {
                     $("#myModalLabel").text("更新");
+                    $("#sel_teamname").val(result[0].team_id);
                     $("#txt_name").val(result[0].name);
                     $("#txt_time").val(result[0].time);
                     shift = result[0];
@@ -68,7 +70,7 @@
 
         };
 
-        function deleteshift(id){
+        function deleteshift(id) {
             $.ajax({
                 url: '../api/shift/' + id,
                 type: "delete",
@@ -89,6 +91,8 @@
                         type: "POST",
                         dataType: 'json',
                         data: {
+                            team_id: $("#sel_teamname").val(),
+                            team_name: $("#sel_teamname").find("option:selected").text(),
                             name: $("#txt_name").val(),
                             time: $("#txt_time").val(),
                         },
@@ -108,19 +112,23 @@
                     $('#myModal').modal("show");
                 }
             } else {
-                if (shift.name != $("#txt_name").val() ||
+                if (shift.team_id != $("#sel_teamname").val()||
+                    shift.name != $("#txt_name").val() ||
                     shift.time != $("#txt_time").val()) {
                     $.ajax({
                         url: '../api/shift/' + shift.id + '/',
                         type: "put",
                         dataType: 'json',
                         data: {
+                            team_id: $("#sel_teamname").val(),
+                            team_name: $("#sel_teamname").find("option:selected").text(),
                             name: $("#txt_name").val(),
                             time: $("#txt_time").val(),
                         },
                         success: function (result) {
                             if (result) {
                                 alert("更新成功");
+                                $("#sel_teamname option:first").prop("selected", 'selected');
                                 $("#txt_name").val('');
                                 $("#txt_time").val('');
                                 window.location.reload();
@@ -136,6 +144,52 @@
         };
         $(function () {
             getshift();
+        });
+    </script>
+    <script type="text/javascript">
+        function startTeam() {
+            $.ajax({
+                url: '../api/team/',
+                type: "GET",
+                dataType: 'json',
+                data: {},
+                success: function (data) {
+                    var ddl = $("#sel_teamname");
+                    //删除节点
+                    RemoveOption();
+                    //转成Json对象
+                    var result = eval(data);
+                    //循环遍历 下拉框绑定
+                    $(result).each(function (key) {
+
+                        var opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
+
+
+                        ddl.append(opt);
+                    });
+
+                },
+                complete: function () {
+
+
+                },
+                error: function () {
+
+
+                }
+            });
+        }
+
+        function RemoveOption() {
+            $("#sel_teamname option").remove();
+        }
+
+        $(function () {
+            startTeam();
+            $("#id option:first").prop("selected", 'selected');
+        });
+        $("#sel_teamname").change(function () {
+
         });
     </script>
     <!-- Demo page code -->
@@ -188,7 +242,11 @@
                 <h4 class="modal-title" id="myModalLabel">新增</h4>
             </div>
             <div class="modal-body">
-
+                <div class="form-group">
+                    <label for="txt_teamname">值班组</label>
+                    <select class="form-control" id="sel_teamname" name="sel_teamname">
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="txt_tname">班次</label>
                     <input type="text" name="txt_name" class="form-control" id="txt_name"
@@ -288,6 +346,7 @@
                     <thead>
                     <tr>
                         <th>#</th>
+                        <th>所属值班组</th>
                         <th>班次</th>
                         <th>值班时间</th>
                         <th style="width: 26px;"></th>
