@@ -2,19 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ebdb4386-75c1-4287-a7dc-bd2eb8489834" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Schedule/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Schedule/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Schedule/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Schedule/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0002_auto_20180320_1510.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0003_auto_20180320_1607.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0004_auto_20180321_1438.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/migrations/0002_auto_20180417_1501.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0005_auto_20180321_1658.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/migrations/0006_auto_20180404_0217.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/serializers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mysite/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calendar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/newcalendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/newcalendar.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,17 +26,35 @@
       <file leaf-file-name="calendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/calendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="795">
+            <state relative-caret-position="16929">
               <caret line="627" column="11" selection-start-line="627" selection-start-column="11" selection-end-line="627" selection-end-column="11" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="newcalendar.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="newcalendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-150">
-              <caret line="641" column="51" lean-forward="true" selection-start-line="641" selection-start-column="51" selection-end-line="641" selection-end-column="51" />
+            <state relative-caret-position="3375">
+              <caret line="640" column="50" selection-start-line="640" selection-start-column="50" selection-end-line="640" selection-end-column="50" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mysite/models.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1053">
+              <caret line="39" column="35" lean-forward="true" selection-start-line="39" selection-start-column="35" selection-end-line="39" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="230">
+              <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -123,11 +129,11 @@
         <option value="$PROJECT_DIR$/mysite/serializers.py" />
         <option value="$PROJECT_DIR$/mysite/urls.py" />
         <option value="$PROJECT_DIR$/mysite/models.py" />
-        <option value="$PROJECT_DIR$/Schedule/settings.py" />
         <option value="$PROJECT_DIR$/Schedule/urls.py" />
         <option value="$PROJECT_DIR$/templates/calendar.html" />
         <option value="$PROJECT_DIR$/mysite/views.py" />
         <option value="$PROJECT_DIR$/templates/newcalendar.html" />
+        <option value="$PROJECT_DIR$/Schedule/settings.py" />
       </list>
     </option>
   </component>
@@ -299,15 +305,16 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" side_tool="true" weight="0.32960325" />
       <window_info anchor="bottom" id="Database Changes" order="13" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="8" weight="0.32960325" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32857144" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32857144" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="Docker" order="11" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="right" id="SciView" order="4" />
@@ -620,9 +627,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
           <caret line="4" column="73" selection-start-line="4" selection-start-column="73" selection-end-line="4" selection-end-column="73" />
-          <folding>
-            <element signature="e#67#101#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -630,13 +634,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
           <caret line="10" column="118" selection-start-line="10" selection-start-column="118" selection-end-line="10" selection-end-column="118" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysite/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="33" column="31" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="31" />
         </state>
       </provider>
     </entry>
@@ -659,24 +656,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="120" column="14" selection-start-line="120" selection-start-column="14" selection-end-line="120" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/calendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="795">
+        <state relative-caret-position="16929">
           <caret line="627" column="11" selection-start-line="627" selection-start-column="11" selection-end-line="627" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-150">
-          <caret line="641" column="51" lean-forward="true" selection-start-line="641" selection-start-column="51" selection-end-line="641" selection-end-column="51" />
+        <state relative-caret-position="3375">
+          <caret line="640" column="50" selection-start-line="640" selection-start-column="50" selection-end-line="640" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysite/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1053">
+          <caret line="39" column="35" lean-forward="true" selection-start-line="39" selection-start-column="35" selection-end-line="39" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="230">
+          <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
         </state>
       </provider>
     </entry>
