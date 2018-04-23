@@ -26,7 +26,7 @@
                 data: {},
                 success: function (data) {
                     var tbBody = ""
-                    $.each(data, function (index, value) {
+                    $.each(data.results, function (index, value) {
                         tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + value.name + "</td>" +
                             "<td>" + value.description + "</td><td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
@@ -57,7 +57,8 @@
                 data: {
                     id: id,
                 },
-                success: function (result) {
+                success: function (data) {
+                    var result = data.results;
                     $("#myModalLabel").text("更新");
                     $("#txt_name").val(result[0].name);
                     $("#txt_desc").val(result[0].description);

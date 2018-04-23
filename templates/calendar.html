@@ -255,7 +255,7 @@
                 //删除节点
                 RemoveOption();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 var i = 0;
                 $(result).each(function (key) {
@@ -306,7 +306,7 @@
                 //删除节点
                 RemoveOption1();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
@@ -348,7 +348,7 @@
                 //删除节点
                 $("#sel_Pname option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
@@ -469,7 +469,7 @@
                         var events = [];
                         var mydate = moment(new Date()).format("YYYY-MM-DD");
                         var color = '';
-                        $.each(data, function (index, value) {
+                        $.each(data.results, function (index, value) {
                             if (mydate > moment(value.date).format("YYYY-MM-DD")) {
                                 color = 'black';
 
@@ -499,8 +499,9 @@
                     data: {
                         id: event.scheduleobj.person_id,
                     },
-                    success: function (result) {
-                        if (result.length == 0) {
+                    success: function (data) {
+                        var result = data.results;
+                        if (data.count == 0) {
                             alert("值班人信息有误，请重试")
                         } else {
                             $("#txt_detailname").val(result[0].name);

@@ -26,7 +26,7 @@
                 data: {},
                 success: function (data) {
                     var tbBody = ""
-                    $.each(data, function (index, value) {
+                    $.each(data.results, function (index, value) {
                         tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + value.team_name + "</td>" +
                             "<td>" + value.name + "</td>" + "<td>" + value.time + "</td><td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
@@ -58,7 +58,8 @@
                 data: {
                     id: id,
                 },
-                success: function (result) {
+                success: function (data) {
+                    var result = data.results;
                     $("#myModalLabel").text("更新");
                     $("#sel_teamname").val(result[0].team_id);
                     $("#txt_name").val(result[0].name);
@@ -112,7 +113,7 @@
                     $('#myModal').modal("show");
                 }
             } else {
-                if (shift.team_id != $("#sel_teamname").val()||
+                if (shift.team_id != $("#sel_teamname").val() ||
                     shift.name != $("#txt_name").val() ||
                     shift.time != $("#txt_time").val()) {
                     $.ajax({
@@ -158,7 +159,7 @@
                     //删除节点
                     RemoveOption();
                     //转成Json对象
-                    var result = eval(data);
+                    var result = eval(data.results);
                     //循环遍历 下拉框绑定
                     $(result).each(function (key) {
 

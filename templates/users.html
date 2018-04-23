@@ -27,7 +27,7 @@
                     //删除节点
                     RemoveOption();
                     //转成Json对象
-                    var result = eval(data);
+                    var result = eval(data.results);
                     //循环遍历 下拉框绑定
                     $(result).each(function (key) {
 
@@ -72,7 +72,7 @@
                 data: {},
                 success: function (data) { // 获取当前月的数据
                     var tbBody = ""
-                    $.each(data, function (index, value) {
+                    $.each(data.results, function (index, value) {
                         tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + value.team_name + "</td>" + "<td>"
                             + value.name + "<td>" + value.tel_num + "<td>" + value.email + "</td>" + "<td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
@@ -105,7 +105,8 @@
                 data: {
                     id: id,
                 },
-                success: function (result) {
+                success: function (data) {
+                    var result = data.results;
                     $("#myModalLabel").text("更新");
                     $("#sel_teamname").val(result[0].team_id);
                     $("#txt_name").val(result[0].name);

@@ -221,7 +221,7 @@
                 //删除节点
                 $("#sel_teamname option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 var i = 0;
                 $(result).each(function (key) {
@@ -260,7 +260,7 @@
                 //删除节点
                 $("#sel_shiftname1 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
@@ -272,7 +272,7 @@
                 //删除节点
                 $("#sel_shiftname2 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
@@ -306,7 +306,7 @@
                 //删除节点
                 $("#sel_MPname1 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
@@ -317,7 +317,7 @@
                 //删除节点
                 $("#sel_SPname1 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 opt = "<option value='-1'>" + "请选择" + "</option>";
                 ddl2.append(opt);
@@ -330,7 +330,7 @@
                 //删除节点
                 $("#sel_MPname2 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
@@ -341,7 +341,7 @@
                 //删除节点
                 $("#sel_SPname2 option").remove();
                 //转成Json对象
-                var result = eval(data);
+                var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 opt = "<option value='-1'>" + "请选择" + "</option>";
                 ddl4.append(opt);
