@@ -155,6 +155,11 @@ def generate(request):
     return HttpResponse(request)
 
 
+@csrf_exempt
+def send_notification(request):
+
+    return HttpResponse(request)
+
 # team view
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()

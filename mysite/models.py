@@ -45,4 +45,4 @@ class Schedule(models.Model):
         return self.person_name
 
     class Meta:
-        ordering = ('date', 'id')
+        ordering = ('date', 'shift_id', 'id')

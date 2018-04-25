@@ -18,7 +18,7 @@
 
     <link href='../static/css/fullcalendar.min.css' rel='stylesheet'/>
     <link href='../static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
-    <script src='../static/jquery//moment.min.js'></script>
+    <script src='../static/jquery/moment.min.js'></script>
     <script src='../static/js/fullcalendar.min.js'></script>
     <!-- Demo page code -->
 
@@ -233,7 +233,16 @@
                     }
                     i++;
                     ddl.append(opt);
-                });
+                })
+                $("#sel_teamname option:first").prop("selected", 'selected');
+                startShift();
+                $("#sel_shiftname1 option:first").prop("selected", 'selected');
+                $("#sel_shiftname2 option:first").prop("selected", 'selected');
+                startPerson();
+                $("#sel_MPname1 option:first").prop("selected", 'selected');
+                $("#sel_SPname1 option:first").prop("selected", 'selected');
+                $("#sel_MPname2 option:first").prop("selected", 'selected');
+                $("#sel_SPname2 option:first").prop("selected", 'selected');
 
             },
             complete: function () {
@@ -382,20 +391,12 @@
     });
     $(function () {
         startTeam();
-        $("#sel_teamname option:first").prop("selected", 'selected');
-        startShift();
-        $("#sel_shiftname1 option:first").prop("selected", 'selected');
-        $("#sel_shiftname2 option:first").prop("selected", 'selected');
-        startPerson();
-        $("#sel_MPname1 option:first").prop("selected", 'selected');
-        $("#sel_SPname1 option:first").prop("selected", 'selected');
-        $("#sel_MPname2 option:first").prop("selected", 'selected');
-        $("#sel_SPname2 option:first").prop("selected", 'selected');
     });
 </script>
 <script>
     var eventslist = [];
-    var events = [];
+    var index = 0;
+    var list = [];
     $(document).ready(function () {
         /*  className colors
 
@@ -450,11 +451,12 @@
                 $('#myModal').modal();
             },
             events: function (start, end, timezone, callback) {
+                var events = [];
                 callback(events);
             },
             eventClick: function (event, element) {
                 scheduleobj = new Object();
-                scheduleobj = event;
+                scheduleobj = event
                 var mylist = eventslist[event.index];
                 var m = 0, n = 0;
                 for (var i = 0; i < mylist.length; i++) {
@@ -484,9 +486,6 @@
                 })
             }
         });
-
-        var index = 0;
-        var list = [];
 
         function pushEvents(title, person_id, person_name, shift_id, shift_name, is_master, order) {
             list.push({
@@ -623,7 +622,9 @@
         var newlist = oldlist.unique3();
         if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
-            location.reload();
+            eventslist = [];
+            index = 0;
+            $('#calendar').fullCalendar('removeEvents');
             return
         }
         // 先排序，然后转时间戳
@@ -642,7 +643,9 @@
         }
         if (flag == false) {
             alert("您输入的排班时间不连续，请重新输入");
-            location.reload();
+            eventslist = [];
+            index = 0;
+            $('#calendar').fullCalendar('removeEvents');
             return
         }
         //Ajax
