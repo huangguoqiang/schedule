@@ -13,8 +13,9 @@ class Team(models.Model):
 class Shift(models.Model):
     name = models.CharField(max_length=30)
     team_id = models.PositiveSmallIntegerField()
-    team_name = models.CharField(max_length=30)
-    time = models.CharField(max_length=30)
+    time_start = models.TimeField()
+    time_end = models.TimeField()
+    order = models.PositiveSmallIntegerField()
 
     def __str__(self):
         return self.name
@@ -22,10 +23,9 @@ class Shift(models.Model):
 
 class Person(models.Model):
     team_id = models.PositiveSmallIntegerField()
-    team_name = models.CharField(max_length=30)
-    name = models.CharField(max_length=30, unique=True)
+    name = models.CharField(max_length=30)
     tel_num = models.CharField(max_length=20)
-    email = models.CharField(max_length=40)
+    email = models.CharField(max_length=40, unique=True)
 
     def __str__(self):
         return self.name
@@ -35,14 +35,13 @@ class Schedule(models.Model):
     team_id = models.PositiveSmallIntegerField()
     date = models.DateTimeField()
     person_id = models.PositiveSmallIntegerField()
-    person_name = models.CharField(max_length=30)
     shift_id = models.PositiveSmallIntegerField()
-    shift_name = models.CharField(max_length=30)
     is_master = models.BooleanField()
     is_base = models.BooleanField()
+    is_public = models.BooleanField()
 
     def __str__(self):
-        return self.person_name
+        return self.date
 
     class Meta:
         ordering = ('date', 'shift_id', 'id')

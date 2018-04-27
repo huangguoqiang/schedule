@@ -44,7 +44,7 @@ class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'team_id', 'person_id', 'date')
+    filter_fields = ('id', 'team_id', 'person_id', 'date', 'is_public')
 
     @list_route()
     def list_by_date(self, request):
@@ -78,19 +78,18 @@ class ScheduleViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def auto_generate(request):
     team_id = request.POST['team_id']
-    lastest_obj = Schedule.objects.filter(team_id=team_id, is_base=False).order_by('-date').first()
-    queryset_base = Schedule.objects.filter(team_id=team_id, is_base=True).all()
+    is_public = request.POST['is_public']
+    lastest_obj = Schedule.objects.filter(team_id=team_id, is_base=False, is_public=is_public).order_by('-date').first()
+    queryset_base = Schedule.objects.filter(team_id=team_id, is_base=True, is_public=is_public).all()
     sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
     i = 0
     while i < 11:
         for obj in queryset_base:
             item = copy.copy(obj)
             item.date = item.date + sub + datetime.timedelta(days=i * 8)
-            print(item.date)
             new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
-                                                       person_id=item.person_id, person_name=item.person_name,
-                                                       shift_id=item.shift_id, shift_name=item.shift_name,
-                                                       is_master=item.is_master, is_base=False)
+                                                       person_id=item.person_id, shift_id=item.shift_id,
+                                                       is_master=item.is_master, is_base=False, is_public=is_public)
             new_schedule_obj.save()
         i = i + 1
 
@@ -100,20 +99,23 @@ def auto_generate(request):
 @csrf_exempt
 def auto_generate_everyday(request):
     queryset_team = Team.objects.all()
-    for obj_team in queryset_team:
-        lastest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=False).order_by('-date').first()
-        if lastest_obj is not None:
-            queryset_base = Schedule.objects.filter(team_id=obj_team.id, is_base=True).all()
-            sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
-            if sub < datetime.timedelta(days=97):
-                for obj in queryset_base:
-                    item = copy.copy(obj)
-                    item.date = item.date + sub
-                    new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
-                                                               person_id=item.person_id, person_name=item.person_name,
-                                                               shift_id=item.shift_id, shift_name=item.shift_name,
-                                                               is_master=item.is_master, is_base=False)
-                    new_schedule_obj.save()
+    for is_public in [True, False]:
+        for obj_team in queryset_team:
+            lastest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=False, is_public=is_public).order_by(
+                '-date').first()
+            if lastest_obj is not None:
+                queryset_base = Schedule.objects.filter(team_id=obj_team.id, is_base=True).all()
+                sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
+                if sub < datetime.timedelta(days=97):
+                    for obj in queryset_base:
+                        item = copy.copy(obj)
+                        item.date = item.date + sub
+                        new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
+                                                                   person_id=item.person_id, shift_id=item.shift_id,
+                                                                   is_master=item.is_master, is_base=False,
+                                                                   is_public=is_public)
+                        new_schedule_obj.save()
+
     return HttpResponse(request)
 
 
@@ -121,24 +123,25 @@ def auto_generate_everyday(request):
 def generate(request):
     schedule_list = json.loads(request.body.decode('utf-8'))
     mist = schedule_list['list']
+    is_public = schedule_list['is_public']
+    print(is_public)
     i = 0
     num = len(mist)
     oldest_date = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
     team_id = mist[0]['team_id']
-    Schedule.objects.filter(team_id=team_id, is_base=True).delete()
+    Schedule.objects.filter(team_id=team_id, is_base=True, is_public=is_public).delete()
     while i < num:
         mist[i]['date'] = datetime.datetime.strptime(mist[i]['date'], '%Y-%m-%d')
         new_schedule_base_obj = Schedule.objects.create(team_id=mist[i]['team_id'], person_id=mist[i]['person_id'],
                                                         date=mist[i]['date'],
-                                                        person_name=mist[i]['person_name'],
                                                         shift_id=mist[i]['shift_id'],
-                                                        shift_name=mist[i]['shift_name'],
-                                                        is_master=mist[i]['is_master'], is_base=True)
+                                                        is_master=mist[i]['is_master'], is_base=True,
+                                                        is_public=is_public)
         new_schedule_base_obj.save()
         if oldest_date > mist[i]['date']:
             oldest_date = mist[i]['date']
         i = i + 1
-    Schedule.objects.filter(team_id=team_id, is_base=False).filter(date__gte=oldest_date).delete()
+    Schedule.objects.filter(team_id=team_id, is_base=False, is_public=is_public).filter(date__gte=oldest_date).delete()
     i = 0
     while i < 12:
         j = 0
@@ -146,9 +149,9 @@ def generate(request):
             item = mist[j].copy()
             item['date'] = item['date'] + datetime.timedelta(days=i * 8)
             new_schedule_obj = Schedule.objects.create(team_id=item['team_id'], date=item['date'],
-                                                       person_id=item['person_id'], person_name=item['person_name'],
-                                                       shift_id=item['shift_id'], shift_name=item['shift_name'],
-                                                       is_master=item['is_master'], is_base=False)
+                                                       person_id=item['person_id'], shift_id=item['shift_id'],
+                                                       is_master=item['is_master'], is_base=False,
+                                                       is_public=is_public)
             new_schedule_obj.save()
             j = j + 1
         i = i + 1
@@ -157,8 +160,8 @@ def generate(request):
 
 @csrf_exempt
 def send_notification(request):
-
     return HttpResponse(request)
+
 
 # team view
 class TeamViewSet(viewsets.ModelViewSet):
@@ -181,4 +184,4 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'team_id', 'name')
+    filter_fields = ('id', 'team_id', 'name', 'email')

@@ -273,7 +273,8 @@
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + result[key].time + ")</option>";
+                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
+                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
                     ddl.append(opt);
                 });
 
@@ -285,7 +286,8 @@
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + result[key].time + ")</option>";
+                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
+                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
                     dd2.append(opt);
                 });
 
@@ -372,7 +374,6 @@
     }
 
     $("#sel_teamname").change(function () {
-        $('#calendar').fullCalendar('refetchEvents');
         startPerson();
         $("#sel_MPname1 option:first").prop("selected", 'selected');
         $("#sel_SPname1 option:first").prop("selected", 'selected');
@@ -381,6 +382,10 @@
         startShift();
         $("#sel_shiftname1 option:first").prop("selected", 'selected');
         $("#sel_shiftname2 option:first").prop("selected", 'selected');
+        eventslist = [];
+        index = 0;
+        $("#calendar").fullCalendar("removeEvents");
+        $('#calendar').fullCalendar('refetchEvents');
     });
 
     $("#sel_shiftname1").change(function () {
@@ -480,22 +485,16 @@
                 }
                 $("#myModalLabel").text("更新");
                 $('#myModal').modal();
-                $('#myModal').on('hidden.bs.modal', function () {
-                    // 执行一些动作...
-
-                })
             }
         });
 
-        function pushEvents(title, person_id, person_name, shift_id, shift_name, is_master, order) {
+        function pushEvents(title, person_id, shift_id, is_master, order) {
             list.push({
                 title: title,
                 team_id: $("#sel_teamname").val(),
                 date: scheduleobj.date,
                 person_id: person_id,
-                person_name: person_name,
                 shift_id: shift_id,
-                shift_name: shift_name,
                 is_master: is_master,
                 order: order
             });
@@ -524,27 +523,24 @@
                 var title = $("#sel_MPname1").find("option:selected").text() + ',' +
                     $("#sel_shiftname1").find("option:selected").text();
                 var titlesum = title;
-                pushEvents(title, $("#sel_MPname1").val(), $("#sel_MPname1").find("option:selected").text(),
-                    $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), true, 0);
+                pushEvents(title, $("#sel_MPname1").val(), //$("#sel_MPname1").find("option:selected").text(),
+                    $("#sel_shiftname1").val(), true, 0);
 
                 if ($("#sel_SPname1").val() != -1) {
                     title = $("#sel_SPname1").find("option:selected").text() + ',' +
                         $("#sel_shiftname1").find("option:selected").text();
-                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
-                        $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
+                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_shiftname1").val(), false, 0);
                     titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
-                pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
-                    $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
+                pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
                 titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
-                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
-                        $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
+                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_shiftname2").val(), false, 1);
                     titlesum = titlesum + "\n" + title;
                 }
                 var myevent = {
@@ -562,27 +558,23 @@
                 var title = $("#sel_MPname1").find("option:selected").text() + ',' +
                     $("#sel_shiftname1").find("option:selected").text();
                 var titlesum = title;
-                pushEvents(title, $("#sel_MPname1").val(), $("#sel_MPname1").find("option:selected").text(),
-                    $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), true, 0);
+                pushEvents(title, $("#sel_MPname1").val(), $("#sel_shiftname1").val(), true, 0);
 
                 if ($("#sel_SPname1").val() != -1) {
                     title = $("#sel_SPname1").find("option:selected").text() + ',' +
                         $("#sel_shiftname1").find("option:selected").text();
-                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_SPname1").find("option:selected").text(),
-                        $("#sel_shiftname1").val(), $("#sel_shiftname1").find("option:selected").text(), false, 0);
+                    pushEvents(title, $("#sel_SPname1").val(), $("#sel_shiftname1").val(), false, 0);
                     titlesum = titlesum + "\n" + title;
                 }
 
                 title = $("#sel_MPname2").find("option:selected").text() + ',' +
                     $("#sel_shiftname2").find("option:selected").text();
-                pushEvents(title, $("#sel_MPname2").val(), $("#sel_MPname2").find("option:selected").text(),
-                    $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), true, 1);
+                pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
                 titlesum = titlesum + "\n" + title;
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
-                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_SPname2").find("option:selected").text(),
-                        $("#sel_shiftname2").val(), $("#sel_shiftname2").find("option:selected").text(), false, 1);
+                    pushEvents(title, $("#sel_SPname2").val(), $("#sel_shiftname2").val(), false, 1);
                     titlesum = titlesum + "\n" + title;
                 }
                 scheduleobj.title = titlesum;
@@ -607,7 +599,8 @@
     }
 
     function generate() {
-
+        // var is_public = confirm("请确认生成的排班是否公开：");
+        var is_public = false;
         var oldlist = [];
         var datalist = [];
         var k = 0;
@@ -650,7 +643,8 @@
         }
         //Ajax
         var params = {
-            list: datalist
+            list: datalist,
+            is_public: is_public
         };
         $.ajax({
             url: '../generate/',

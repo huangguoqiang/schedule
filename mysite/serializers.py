@@ -8,7 +8,7 @@ from mysite.models import *
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
-        fields = ('id', 'team_id', 'date', 'person_id', 'person_name', 'shift_id', 'shift_name', 'is_master', 'is_base')
+        fields = ('id', 'team_id', 'date', 'person_id', 'shift_id', 'is_master', 'is_base', 'is_public')
 
 
 class TeamSerializer(serializers.ModelSerializer):
@@ -20,10 +20,10 @@ class TeamSerializer(serializers.ModelSerializer):
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = ('id', 'name', 'team_id', 'team_name', 'time')
+        fields = ('id', 'name', 'team_id', 'time_start', 'time_end', 'order')
 
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ('id', 'team_id', 'team_name', 'name', 'tel_num', 'email')
+        fields = ('id', 'team_id', 'name', 'tel_num', 'email')

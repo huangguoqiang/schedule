@@ -243,6 +243,9 @@
     </div>
 </div>
 <script type="text/javascript">
+    var shift_dict = new Array();
+    var person_dict = new Array();
+
     function startTeam() {
         $.ajax({
             url: '../api/team/',
@@ -290,11 +293,12 @@
     }
 
     $("#sel_teamname").change(function () {
-        $('#calendar').fullCalendar('refetchEvents');
         startPerson();
         $("#sel_Pname option:first").prop("selected", 'selected');
         startShift();
         $("#sel_shiftname option:first").prop("selected", 'selected');
+        $("#calendar").fullCalendar("removeEvents");
+        $('#calendar').fullCalendar('refetchEvents');
     });
 
     function startShift() {
@@ -314,8 +318,11 @@
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + result[key].time + ")</option>";
+                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
+                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
                     ddl.append(opt);
+                    shift_dict[result[key].id] = [result[key].name, moment(result[key].time_start,
+                        "HH:mm:ss").format("HH:mm"), moment(result[key].time_end, "HH:mm:ss").format("HH:mm")]
                 });
 
             },
@@ -357,6 +364,7 @@
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
                     ddl1.append(opt);
+                    person_dict[result[key].id] = result[key].name;
                 });
             },
             complete: function () {
@@ -381,6 +389,7 @@
             dataType: 'text',
             data: {
                 team_id: $("#sel_teamname").val(),
+                is_public: 'False'
             },
             success: function (data) {
                 alert("生成成功");
@@ -462,7 +471,8 @@
                     data: {
                         team_id: $("#sel_teamname").val(),
                         year: date.getFullYear(),
-                        month: date.getMonth() + 1
+                        month: date.getMonth() + 1,
+                        is_public: false
                     },
                     success: function (data) {
                         var events = [];
@@ -476,9 +486,10 @@
                                 color = colors[value.shift_id % 5];
                             }
                             events.push({
+                                id: value.id,
                                 scheduleobj: value,
-                                title: value.person_name + ',' + value.shift_name,
-                                //$("#sel_shiftname option[value='" + value.shift_id + "']").text(),
+                                title: person_dict[value.person_id] + ',' + shift_dict[value.shift_id][0] + '('
+                                + shift_dict[value.shift_id][1] + '~' + shift_dict[value.shift_id][2] + ')',
                                 order: index,
                                 allDay: true,
                                 color: color,
@@ -541,37 +552,36 @@
                         team_id: $("#sel_teamname").val(),
                         date: envdate,
                         person_id: $("#sel_Pname").val(),
-                        person_name: $("#sel_Pname").find("option:selected").text(),
                         shift_id: $("#sel_shiftname").val(),
-                        shift_name: $("#sel_shiftname").find("option:selected").text(),
-                        is_master: ismaster
+                        is_master: ismaster,
+                        is_public: false
                     },
                     success: function (result) {
                         if (result) {
                             alert("添加成功");
-                            if (result.person_name != null) {
-                                var title = result.person_name + ',' +
-                                    $("#sel_shiftname option[value='" + result.shift_id + "']").text();
-                                var eventData;
-                                var mydate = moment(new Date()).format("YYYY-MM-DD");
-                                var color = '';
-                                if (mydate > moment(result.date).format("YYYY-MM-DD")) {
-                                    color = 'black';
-                                } else {
-                                    color = colors[result.shift_id % 5];
-                                }
-                                if (title) {
-                                    eventData = {
-                                        title: title,
-                                        start: result.date,
-                                        allDay: true,
-                                        color: color,
-                                        scheduleobj: result,
-                                    }
-                                    $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
-                                    $('#calendar').fullCalendar('unselect');
-                                }
+                            var title = $("#sel_Pname option[value='" + result.person_id + "']").text() + ',' +
+                                $("#sel_shiftname option[value='" + result.shift_id + "']").text();
+                            var eventData;
+                            var mydate = moment(new Date()).format("YYYY-MM-DD");
+                            var color = '';
+                            if (mydate > moment(result.date).format("YYYY-MM-DD")) {
+                                color = 'black';
+                            } else {
+                                color = colors[result.shift_id % 5];
                             }
+                            if (title) {
+                                eventData = {
+                                    id: result.id,
+                                    title: title,
+                                    start: result.date,
+                                    allDay: true,
+                                    color: color,
+                                    scheduleobj: result,
+                                }
+                                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                                $('#calendar').fullCalendar('unselect');
+                            }
+
                         } else {
                             alert("添加失败，请重试");
                             $('#myModal').modal("show");
@@ -591,15 +601,15 @@
                             team_id: myevent.scheduleobj.team_id,
                             date: myevent.scheduleobj.date,
                             person_id: $("#sel_Pname").val(),
-                            person_name: $("#sel_Pname").find("option:selected").text(),
                             shift_id: $("#sel_shiftname").val(),
-                            shift_name: $("#sel_shiftname").find("option:selected").text(),
-                            is_master: ismaster
+                            is_master: ismaster,
+                            is_public: false
                         },
                         success: function (result) {
                             if (result) {
                                 alert("更新成功");
-                                myevent.title = result.person_name + ',' + result.shift_name;
+                                myevent.title = $("#sel_Pname option[value='" + result.person_id + "']").text() + ',' +
+                                    $("#sel_shiftname option[value='" + result.shift_id + "']").text();
                                 //更新日程对象信息
                                 if (myevent.color != 'black') {
                                     myevent.color = colors[result.shift_id % 5]
@@ -623,7 +633,8 @@
                 data: {},
                 success: function (result) {
                     alert("删除成功");
-                    $('#calendar').fullCalendar('refetchEvents');
+                    //$('#calendar').fullCalendar('refetchEvents');
+                    $("#calendar").fullCalendar("removeEvents", myevent.scheduleobj.id);
                 }
             });
         });

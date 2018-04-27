@@ -2,13 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ebdb4386-75c1-4287-a7dc-bd2eb8489834" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/mysite/mail.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mysite/static/css/jquery.timepicker.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mysite/static/js/jquery.timepicker.min.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/css/jquery.timepicker.min.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/js/jquery.timepicker.min.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Schedule/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Schedule/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mysite/mail.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/mail.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mysite/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mysite/migrations/0002_auto_20180419_1316.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/mysite/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mysite/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/serializers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mysite/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/mysite/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/calendar.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/newcalendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/newcalendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/shift.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/shift.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/users.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/users.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -31,8 +39,8 @@
       <file leaf-file-name="calendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/calendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="13" column="43" selection-start-line="13" selection-start-column="43" selection-end-line="13" selection-end-column="43" />
+            <state relative-caret-position="328">
+              <caret line="299" column="7" lean-forward="true" selection-start-line="299" selection-start-column="7" selection-end-line="299" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -40,8 +48,26 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mysite/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
+            <state relative-caret-position="378">
+              <caret line="40" column="13" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shift.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/shift.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="33" column="131" selection-start-line="33" selection-start-column="79" selection-end-line="33" selection-end-column="131" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="users.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/users.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2554">
+              <caret line="127" column="23" selection-start-line="127" selection-start-column="23" selection-end-line="127" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -49,8 +75,8 @@
       <file leaf-file-name="newcalendar.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="27">
-              <caret line="383" column="7" selection-start-line="383" selection-start-column="7" selection-end-line="383" selection-end-column="7" />
+            <state relative-caret-position="162">
+              <caret line="294" column="35" lean-forward="true" selection-start-line="294" selection-start-column="35" selection-end-line="294" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -58,7 +84,7 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
+            <state relative-caret-position="392">
               <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
             </state>
           </provider>
@@ -79,8 +105,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mysite/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-135">
-              <caret line="53" column="19" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="19" />
+            <state relative-caret-position="525">
+              <caret line="131" column="78" selection-start-line="131" selection-start-column="69" selection-end-line="131" selection-end-column="78" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
                 <element signature="e#477#516#0" />
@@ -94,11 +120,23 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="serializers.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mysite/serializers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="10" column="102" selection-start-line="10" selection-start-column="102" selection-end-line="10" selection-end-column="102" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="mail.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mysite/mail.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="103" column="64" selection-start-line="103" selection-start-column="64" selection-end-line="103" selection-end-column="64" />
+            <state relative-caret-position="2754">
+              <caret line="106" column="74" selection-start-line="106" selection-start-column="74" selection-end-line="106" selection-end-column="74" />
+              <folding>
+                <element signature="e#46#60#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -116,29 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>myevent</find>
-      <find>colors</find>
-      <find>hid</find>
-      <find>start</find>
-      <find>sel_shiftname</find>
-      <find>auto</find>
-      <find>myModal</find>
-      <find>genera</find>
-      <find>scheduleobj</find>
-      <find>page</find>
-      <find>REST_FRAMEWORK</find>
-      <find>ajax</find>
-      <find>shiftname1</find>
-      <find>api</find>
-      <find>==</find>
-      <find>==0</find>
-      <find>calendar</find>
-      <find>eventslist</find>
-      <find>reload</find>
-      <find>events</find>
-      <find>list</find>
-      <find>WEEKDAY_LIST</find>
-      <find>EXCH_DICT</find>
       <find>MEMBER_COUNT_IN_LOOP</find>
       <find>today</find>
       <find>gt</find>
@@ -146,6 +161,29 @@
       <find>normal_duty_member</find>
       <find>range</find>
       <find>shift</find>
+      <find>txt_time</find>
+      <find>team_name</find>
+      <find>forma</find>
+      <find>moment</find>
+      <find>format</find>
+      <find>startTeam</find>
+      <find>value=</find>
+      <find>name</find>
+      <find>generate</find>
+      <find>time</find>
+      <find>ismaster</find>
+      <find>auto</find>
+      <find>False</find>
+      <find>false</find>
+      <find>text</find>
+      <find>delete</find>
+      <find>hidd</find>
+      <find>select</find>
+      <find>sub</find>
+      <find>refetc</find>
+      <find>print</find>
+      <find>change</find>
+      <find>list</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -169,17 +207,19 @@
         <option value="$PROJECT_DIR$/mysite/admin.py" />
         <option value="$PROJECT_DIR$/mysite/urls.py" />
         <option value="$PROJECT_DIR$/Schedule/urls.py" />
-        <option value="$PROJECT_DIR$/mysite/serializers.py" />
         <option value="$PROJECT_DIR$/templates/team.html" />
-        <option value="$PROJECT_DIR$/templates/users.html" />
-        <option value="$PROJECT_DIR$/templates/shift.html" />
-        <option value="$PROJECT_DIR$/templates/newcalendar.html" />
         <option value="$PROJECT_DIR$/mysite/static/mail.py" />
-        <option value="$PROJECT_DIR$/mysite/models.py" />
         <option value="$USER_HOME$/Downloads/mail.py" />
+        <option value="$PROJECT_DIR$/mysite/mail.py" />
+        <option value="$PROJECT_DIR$/mysite/static/css/jquery.timepicker.min.css" />
+        <option value="$PROJECT_DIR$/static/css/jquery.timepicker.min.css" />
+        <option value="$PROJECT_DIR$/templates/shift.html" />
+        <option value="$PROJECT_DIR$/mysite/models.py" />
+        <option value="$PROJECT_DIR$/templates/users.html" />
+        <option value="$PROJECT_DIR$/mysite/serializers.py" />
         <option value="$PROJECT_DIR$/mysite/views.py" />
         <option value="$PROJECT_DIR$/templates/calendar.html" />
-        <option value="$PROJECT_DIR$/mysite/mail.py" />
+        <option value="$PROJECT_DIR$/templates/newcalendar.html" />
         <option value="$PROJECT_DIR$/Schedule/settings.py" />
       </list>
     </option>
@@ -237,6 +277,12 @@
               <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
               <item name="Schedule" type="462c0819:PsiDirectoryNode" />
               <item name="mysite" type="462c0819:PsiDirectoryNode" />
+              <item name="migrations" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="mysite" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -249,7 +295,26 @@
             <path>
               <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
               <item name="Schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="mysite" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
               <item name="Schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="css" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Schedule" type="462c0819:PsiDirectoryNode" />
+              <item name="static" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Schedule" type="b2602c69:ProjectViewProjectNode" />
@@ -270,13 +335,16 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\code\py\Schedule\static\css" />
+      <recent name="C:\code\py\Schedule\mysite\static\js" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\code\py\Schedule\static\js" />
+      <recent name="C:\code\py\Schedule\mysite\static\css" />
+      <recent name="C:\code\py\Schedule\mysite\static\js" />
       <recent name="C:\code\py\Schedule\templates" />
       <recent name="C:\code\py\Schedule\mysite\static\jquery" />
-      <recent name="C:\code\py\Schedule\mysite\static\images" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\code\py\Schedule\mysite\static\js" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -423,36 +491,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/mysite/mail.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2457">
-          <caret line="95" column="31" lean-forward="true" selection-start-line="95" selection-start-column="31" selection-end-line="95" selection-end-column="31" />
+        <state relative-caret-position="2754">
+          <caret line="106" column="74" lean-forward="true" selection-start-line="106" selection-start-column="74" selection-end-line="106" selection-end-column="74" />
+          <folding>
+            <element signature="e#46#60#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/rest_framework/views.py">
+    <entry file="file://$PROJECT_DIR$/mysite/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="490" selection-start-line="490" selection-end-line="490" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysite/static/js/fullcalendar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178038">
-          <caret line="6598" column="60" selection-start-line="6598" selection-start-column="50" selection-end-line="6598" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/calendar.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2241">
-          <caret line="148" selection-start-line="148" selection-end-line="148" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/users.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2955">
-          <caret line="98" column="58" selection-start-line="98" selection-start-column="58" selection-end-line="98" selection-end-column="58" />
+        <state relative-caret-position="729">
+          <caret line="27" column="43" lean-forward="true" selection-start-line="27" selection-start-column="43" selection-end-line="27" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -601,27 +651,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/users.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="10" column="110" selection-start-line="10" selection-start-column="110" selection-end-line="10" selection-end-column="110" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/shift.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8991">
-          <caret line="333" column="36" selection-start-line="333" selection-start-column="36" selection-end-line="333" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysite/serializers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="1" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mysite/apps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -667,10 +696,63 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mysite/mail.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2754">
+          <caret line="106" column="74" selection-start-line="106" selection-start-column="74" selection-end-line="106" selection-end-column="74" />
+          <folding>
+            <element signature="e#46#60#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysite/migrations/0003_auto_20180425_1105.py" />
+    <entry file="file://$PROJECT_DIR$/mysite/static/css/jquery.timepicker.min.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-931">
+          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/css/jquery.timepicker.min.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="12" column="27" selection-start-line="12" selection-start-column="27" selection-end-line="12" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/users.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2554">
+          <caret line="127" column="23" selection-start-line="127" selection-start-column="23" selection-end-line="127" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/shift.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="33" column="131" selection-start-line="33" selection-start-column="79" selection-end-line="33" selection-end-column="131" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysite/serializers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="10" column="102" selection-start-line="10" selection-start-column="102" selection-end-line="10" selection-end-column="102" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mysite/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="40" column="13" selection-start-line="40" selection-start-column="4" selection-end-line="40" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mysite/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-135">
-          <caret line="53" column="19" selection-start-line="53" selection-start-column="18" selection-end-line="53" selection-end-column="19" />
+        <state relative-caret-position="525">
+          <caret line="131" column="78" selection-start-line="131" selection-start-column="69" selection-end-line="131" selection-end-column="78" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
             <element signature="e#477#516#0" />
@@ -683,37 +765,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mysite/mail.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="103" column="64" selection-start-line="103" selection-start-column="64" selection-end-line="103" selection-end-column="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/calendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="13" column="43" selection-start-line="13" selection-start-column="43" selection-end-line="13" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mysite/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="27" column="42" selection-start-line="27" selection-start-column="42" selection-end-line="27" selection-end-column="42" />
+        <state relative-caret-position="328">
+          <caret line="299" column="7" lean-forward="true" selection-start-line="299" selection-start-column="7" selection-end-line="299" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/newcalendar.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="383" column="7" selection-start-line="383" selection-start-column="7" selection-end-line="383" selection-end-column="7" />
+        <state relative-caret-position="162">
+          <caret line="294" column="35" lean-forward="true" selection-start-line="294" selection-start-column="35" selection-end-line="294" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Schedule/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
+        <state relative-caret-position="392">
           <caret line="83" column="29" selection-start-line="83" selection-start-column="29" selection-end-line="83" selection-end-column="29" />
         </state>
       </provider>
