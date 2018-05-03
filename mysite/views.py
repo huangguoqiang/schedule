@@ -35,8 +35,68 @@ def team(request):
     return render(request, 'team.html')
 
 
+def count(request):
+    return render(request, 'count.html')
+
+
+# 获取项目健康状态
 def get_health(request):
     return HttpResponse(json.dumps({'status': 'UP'}), content_type="application/json")
+
+
+# 根據team_id,開始日期，結束日期統計
+@csrf_exempt
+def get_schedule_count(request):
+    team_id = request.POST['team_id']
+    date_from = request.POST['date_from']
+    date_to = request.POST['date_to']
+    person_dict = {}
+    shift_dict = {}
+    person_count_dict = {}
+    schedule_set = Schedule.objects.filter(date__range=(date_from, date_to)).filter(team_id=team_id, is_base=False,
+                                                                                    is_public=False).all()
+    shift_set = Shift.objects.filter(team_id=team_id).all()
+    person_set = Person.objects.filter(team_id=team_id).all()
+    for obj in shift_set:
+        shift_dict[obj.id] = obj
+    for obj in person_set:
+        person_dict[obj.id] = obj
+    for obj in schedule_set:
+        if person_count_dict.get(obj.person_id) is None:
+            person = person_dict[obj.person_id]
+            shift_count_dict = {}
+            for k, v in shift_dict.items():
+                shift_count_dict[v.name] = 0
+            one_shift = shift_dict.get(obj.shift_id)
+            shift_count_dict[one_shift.name] = shift_count_dict[one_shift.name] + 1
+            person_list = [person.name, shift_count_dict]
+            person_count_dict[obj.person_id] = person_list
+        else:
+            one_shift = shift_dict.get(obj.shift_id)
+            person_count_dict[obj.person_id][1][one_shift.name] = person_count_dict[obj.person_id][1][
+                                                                      one_shift.name] + 1
+    return HttpResponse(json.dumps(person_count_dict), content_type="application/json")
+
+
+# 获取当天某个team的值班表
+@csrf_exempt
+def get_schedule_today(request):
+    team_id = int(request.GET['team_id'])
+    today = time.strftime("%Y-%m-%d")
+    today_list = []
+    my_dict = {}
+    queryset = Schedule.objects.filter(date=today, team_id=team_id, is_base=False, is_public=False).all()
+    for obj in queryset:
+        print(obj.date)
+        person = Person.objects.filter(id=obj.person_id).first()
+        one_shift = Shift.objects.filter(id=obj.shift_id).first()
+        my_dict['date'] = today
+        my_dict['person_name'] = person.name
+        my_dict['shift_name'] = one_shift.name
+        my_dict['time_start'] = one_shift.time_start.strftime("%H:%M")
+        my_dict['time_end'] = one_shift.time_end.strftime("%H:%M")
+        today_list.append(my_dict)
+    return HttpResponse(json.dumps(today_list), content_type="application/json")
 
 
 # schedule view
@@ -62,19 +122,8 @@ class ScheduleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @list_route()
-    def list_by_today(self, request):
-        today = time.strftime("%Y-%m-%d")
-        queryset = self.filter_queryset(self.get_queryset().filter(date=today))
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
+# 自动生成下三个月排班
 @csrf_exempt
 def auto_generate(request):
     team_id = request.POST['team_id']
@@ -96,6 +145,7 @@ def auto_generate(request):
     return HttpResponse(request)
 
 
+# 每天检测排班（通过crontab调用api）是否够三个月，不够自动生成
 @csrf_exempt
 def auto_generate_everyday(request):
     queryset_team = Team.objects.all()
@@ -119,6 +169,7 @@ def auto_generate_everyday(request):
     return HttpResponse(request)
 
 
+# 生成排班表
 @csrf_exempt
 def generate(request):
     schedule_list = json.loads(request.body.decode('utf-8'))
@@ -165,7 +216,7 @@ def send_notification(request):
 
 # team view
 class TeamViewSet(viewsets.ModelViewSet):
-    queryset = Team.objects.all()
+    queryset = Team.objects.all().order_by('id')
     serializer_class = TeamSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('id', 'name')
@@ -173,7 +224,7 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 # shift view
 class ShiftViewSet(viewsets.ModelViewSet):
-    queryset = Shift.objects.all()
+    queryset = Shift.objects.all().order_by('id')
     serializer_class = ShiftSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('id', 'team_id', 'name')
@@ -181,7 +232,7 @@ class ShiftViewSet(viewsets.ModelViewSet):
 
 # person view
 class PersonViewSet(viewsets.ModelViewSet):
-    queryset = Person.objects.all()
+    queryset = Person.objects.all().order_by('id')
     serializer_class = PersonSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ('id', 'team_id', 'name', 'email')

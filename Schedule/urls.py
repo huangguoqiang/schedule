@@ -28,8 +28,11 @@ urlpatterns = [
     url(r'^shift/', shift),
     url(r'^team/', team),
     url(r'^users/', users),
+    url(r'^count/', count),
     url(r'^auto_generate/', auto_generate),
     url(r'^auto_generate_everyday/', auto_generate_everyday),
     url(r'^generate/', generate),
     url(r'^get_health/', get_health),
+    url(r'^get_schedule_today', get_schedule_today),
+    url(r'^get_schedule_count', get_schedule_count),
 ]
