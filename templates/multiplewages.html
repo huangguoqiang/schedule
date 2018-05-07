@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Bootstrap Admin</title>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="../static/css/theme.css">
+    <link rel="stylesheet" href="../static/css/font-awesome.css">
+
+    <script src="../static/jquery/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link href='../static/css/fullcalendar.min.css' rel='stylesheet'/>
+    <link href='../static/css/fullcalendar.print.min.css' rel='stylesheet' media='print'/>
+    <script src='../static/jquery/moment.min.js'></script>
+    <script src='../static/js/fullcalendar.min.js'></script>
+    <!-- Demo page code -->
+
+    <style type="text/css">
+        #line-chart {
+            height: 300px;
+            width: 800px;
+            margin: 0px auto;
+            margin-top: 1em;
+        }
+
+        .brand {
+            font-family: georgia, serif;
+        }
+
+        .brand .first {
+            color: #ccc;
+            font-style: italic;
+        }
+
+        .brand .second {
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .s_center {
+            width: auto;
+            padding: 0 2%;
+            margin: 0;
+        }
+
+        .s_center option {
+            text-align: center;
+        }
+    </style>
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="../static/images/favicon.ico">
+</head>
+
+<!--[if lt IE 7 ]> <body class="ie ie6"> <![endif]-->
+<!--[if IE 7 ]> <body class="ie ie7 "> <![endif]-->
+<!--[if IE 8 ]> <body class="ie ie8 "> <![endif]-->
+<!--[if IE 9 ]> <body class="ie ie9 "> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<body class="">
+<!--<![endif]-->
+
+<div class="navbar">
+    <div class="navbar-inner">
+        <ul class="nav pull-right">
+
+            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>
+            <li id="fat-menu" class="dropdown">
+                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="icon-user"></i> Jack Smith
+                    <i class="icon-caret-down"></i>
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a tabindex="-1" href="#">My Account</a></li>
+                    <li class="divider"></li>
+                    <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
+                    <li class="divider visible-phone"></li>
+                    <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+                </ul>
+            </li>
+
+        </ul>
+        <a class="brand" href="index.html"><span class="first">Your</span> <span class="second">Company</span></a>
+    </div>
+</div>
+
+
+<div class="copyrights">Collect from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></div>
+<div class="sidebar-nav">
+    <form class="search form-inline">
+        <input type="text" placeholder="Search...">
+    </form>
+
+    <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
+    <ul id="dashboard-menu" class="nav nav-list collapse in">
+        <li><a href="../home">排班表</a></li>
+        <li><a href="../users">值班人员管理</a></li>
+        <li><a href="../shift">班次管理</a></li>
+        <li><a href="../team">值班组管理</a></li>
+        <li><a href="../calendar">生成排班表</a></li>
+        <li><a href="../multiple_wages">添加多薪日期</a></li>
+        <li><a href="../count">排班统计</a></li>
+
+    </ul>
+
+    <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>Account<span
+            class="label label-info">+3</span></a>
+    <ul id="accounts-menu" class="nav nav-list collapse">
+        <li><a href="sign-in.html">Sign In</a></li>
+        <li><a href="sign-up.html">Sign Up</a></li>
+        <li><a href="reset-password.html">Reset Password</a></li>
+    </ul>
+
+</div>
+
+
+<div class="content">
+
+    <div class="header">
+        <div class="stats">
+            <p class="stat"><span class="number">53</span>tickets</p>
+            <p class="stat"><span class="number">27</span>tasks</p>
+            <p class="stat"><span class="number">15</span>waiting</p>
+        </div>
+
+        <h1 class="page-title">添加多薪日期</h1>
+    </div>
+
+    <ul class="breadcrumb">
+        <li><a href="../home/">Home</a> <span class="divider">/</span></li>
+        <li class="active">添加多薪日期</li>
+    </ul>
+
+    <div class="container-fluid">
+        <div id='wrap'>
+            <div id='calendar'></div>
+            <div style='clear:both'></div>
+        </div>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">×</span></button>
+                        <h4 class="modal-title" id="myModalLabel">新增</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="txt_ratio" id="txt_ratio">工资倍数为：</label>
+                            <select class="form-control" id="sel_ratio" name="sel_ratio">
+                                <option value="2">双薪</option>
+                                <option value="3">三薪</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
+                        </button>
+                        <button type="button" id="btn_delete" class="btn btn-primary" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>删除
+                        </button>
+                        <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        /*  className colors
+
+        className: default(transparent), important(red), chill(pink), success(green), info(blue)
+
+        */
+        /* initialize the external events
+        -----------------------------------------------------------------*/
+        var mydate = '';
+        var myevent = '';
+        $('#external-events div.external-event').each(function () {
+
+            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+            // it doesn't need to have a start or end
+            var eventObject = {
+                title: $.trim($(this).text()) // use the element's text as the event title
+            };
+
+            // store the Event Object in the DOM element so we can get to it later
+            $(this).data('eventObject', eventObject);
+
+            // make the event draggable using jQuery UI
+            $(this).draggable({
+                zIndex: 999,
+                revert: true,      // will cause the event to go back to its
+                revertDuration: 0  //  original position after the drag
+            });
+
+        });
+
+
+        /* initialize the calendar
+        -----------------------------------------------------------------*/
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'today'
+            },
+            lang: 'zh-cn',
+            timezone: "local",
+            eventLimit: true, // allow "more" link when too many events
+            selectable: true,
+            select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
+                console.log("↓↓↓select↓↓↓");
+                mydate = new String(moment(start).format("YYYY-MM-DD")) + "T00:00:00";
+                $.ajax({
+                    url: '../api/multipleWages/',
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        date: mydate,
+                    },
+                    success: function (data) {
+                        if (data.count == 0) {
+                            $("#myModalLabel").text("新增");
+                            $("#txt_ratio").text("设置" + mydate + "的工资倍数为：");
+                            $("#btn_delete").hide();
+                            $('#myModal').modal();
+                        } else {
+                            alert("该日期已设置过多倍工资，无法继续添加");
+                            $('#calendar').fullCalendar('unselect');
+                        }
+                    }
+                });
+
+            },
+            events: function (start, end, timezone, callback) {
+                $("#calendar").fullCalendar("removeEvents");
+                var date = new Date(this.getDate());
+                // 获取当前月的数据
+                $.ajax({
+                    url: '../api/multipleWages/list_by_date/',
+                    type: "GET",
+                    dataType: 'json',
+                    data: {
+                        year: date.getFullYear(),
+                        month: date.getMonth() + 1,
+                    },
+                    success: function (data) {
+                        var events = [];
+                        $.each(data.results, function (index, value) {
+                            events.push({
+                                id: value.id,
+                                scheduleobj: value,
+                                title: $("#sel_ratio option[value='" + value.ratio + "']").text(),
+                                allDay: true,
+                                start: value.date
+                            });
+                        });
+                        callback(events);
+                    }
+                });
+            },
+            eventClick: function (event, element) {
+                myevent = new Object();
+                myevent = event;
+                $("#myModalLabel").text("更新");
+                $("#btn_delete").show();
+                $("#sel_ratio").val(myevent.scheduleobj.ratio);
+                $('#myModal').modal();
+            }
+        });
+
+        $('#myModal').on('hidden.bs.modal', function () {
+            // 执行一些动作...
+            if ($("#myModalLabel").text() == '新增') {
+                $("#sel_ratio option:first").prop("selected", 'selected');
+            } else {
+                $("#sel_ratio option:first").prop("selected", 'selected');
+            }
+        });
+        $("#btn_delete").click(function () {
+            $.ajax({
+                url: '../api/multipleWages/' + myevent.scheduleobj.id,
+                type: "delete",
+                dataType: 'json',
+                data: {},
+                success: function (result) {
+                    alert("删除成功");
+                    $("#calendar").fullCalendar("removeEvents", myevent.scheduleobj.id);
+                }
+            });
+        });
+
+        $("#btn_submit").click(function () {
+            if ($("#myModalLabel").text() == '新增') {
+                $.ajax({
+                    url: '../api/multipleWages/',
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        date: mydate,
+                        ratio: $("#sel_ratio").val()
+                    },
+                    success: function (result) {
+                        if (result) {
+                            alert("添加成功");
+                            var title = $("#sel_ratio option[value='" + result.ratio + "']").text();
+                            var eventData;
+                            if (title) {
+                                eventData = {
+                                    id: result.id,
+                                    title: title,
+                                    start: result.date,
+                                    allDay: true,
+                                    scheduleobj: result,
+                                }
+                                $('#calendar').fullCalendar('renderEvent', eventData, true); // stick? = true
+                                $('#calendar').fullCalendar('unselect');
+                            }
+
+                        } else {
+                            alert("添加失败，请重试");
+                            $('#myModal').modal("show");
+                        }
+                    }
+                });
+            } else {
+                if ($("#sel_ratio").val() != myevent.scheduleobj.ratio) {
+                    $.ajax({
+                        url: '../api/multipleWages/' + myevent.scheduleobj.id + '/',
+                        type: "put",
+                        dataType: 'json',
+                        data: {
+                            date: myevent.scheduleobj.date,
+                            ratio: $("#sel_ratio").val(),
+                        },
+                        success: function (result) {
+                            if (result) {
+                                alert("更新成功");
+                                myevent.title = $("#sel_ratio option[value='" + result.ratio + "']").text();
+                                //更新日程对象信息
+                                myevent.scheduleobj = result;
+                                $('#calendar').fullCalendar('updateEvent', myevent);
+                            } else {
+                                alert("更新失败，请重试");
+                                $('#myModal').modal("show");
+                            }
+                        }
+                    });
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>
+
+

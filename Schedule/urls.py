@@ -35,4 +35,5 @@ urlpatterns = [
     url(r'^get_health/', get_health),
     url(r'^get_schedule_today', get_schedule_today),
     url(r'^get_schedule_count', get_schedule_count),
+    url(r'^multiple_wages/', multiple_wages),
 ]

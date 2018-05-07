@@ -70,21 +70,24 @@
         };
 
         function deleteteam(id) {
-            $.ajax({
-                url: '../api/team/' + id,
-                type: "delete",
-                dataType: 'json',
-                data: {},
-                success: function (result) {
-                    alert("删除成功");
-                    window.location.reload();
-                }
-            });
+            var con = confirm("删除值班组会删除所有与值班组有关的数据（例如：班次，值班人员，排班信息），请确定是否删除：");
+            if (con == true) {
+                $.ajax({
+                    url: '../api/team/' + id,
+                    type: "delete",
+                    dataType: 'json',
+                    data: {},
+                    success: function (result) {
+                        alert("删除成功");
+                        window.location.reload();
+                    }
+                });
+            }
         };
 
         function submit() {
             if ($("#myModalLabel").text() == '新增') {
-                if ($("#txt_name").val() != '' && $("#txt_time").val() != '') {
+                if ($("#txt_name").val() != '' && $("#txt_desc").val() != '') {
                     $.ajax({
                         url: '../api/team/',
                         type: "POST",
@@ -254,6 +257,7 @@
         <li><a href="../shift">班次管理</a></li>
         <li><a href="../team">值班组管理</a></li>
         <li><a href="../calendar">生成排班表</a></li>
+        <li><a href="../multiple_wages">添加多薪日期</a></li>
         <li><a href="../count">排班统计</a></li>
 
     </ul>

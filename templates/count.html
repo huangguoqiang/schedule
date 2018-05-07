@@ -117,6 +117,7 @@
         <li><a href="../shift">班次管理</a></li>
         <li><a href="../team">值班组管理</a></li>
         <li><a href="../calendar">生成排班表</a></li>
+        <li><a href="../multiple_wages">添加多薪日期</a></li>
         <li><a href="../count">排班统计</a></li>
 
     </ul>
@@ -166,8 +167,8 @@
                         <th>数量</th>
                         <th>班次</th>
                         <th>数量</th>
-                        <th>三薪(h)</th>
                         <th>双薪(h)</th>
+                        <th>三薪(h)</th>
                         <th style="width: 26px;"></th>
                     </tr>
                     </thead>
@@ -250,7 +251,7 @@
                         tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
                     }
 
-                    tbBody += "<td>" + 1 + "</td><td>" + 2 + "</td></tr>";
+                    tbBody += "<td>" + value[2] + "</td><td>" + value[3] + "</td></tr>";
                 });
                 $("#myTb").append(tbBody);
             }
@@ -261,7 +262,8 @@
         startTeam();
         var today = new Date();
         var date_start = moment(new Date(today.getFullYear(), today.getMonth(), 1)).format("YYYY-MM-DD");
-        var date_end = moment(today).format("YYYY-MM-DD");
+        var mdays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        var date_end = moment(new Date(today.getFullYear(), today.getMonth(), mdays[today.getMonth()])).format("YYYY-MM-DD");
         $("#date_start").val(date_start);
         $("#date_end").val(date_end);
     });

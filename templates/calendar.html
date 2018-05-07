@@ -111,6 +111,7 @@
         <li><a href="../shift">班次管理</a></li>
         <li><a href="../team">值班组管理</a></li>
         <li><a href="../calendar">生成排班表</a></li>
+        <li><a href="../multiple_wages">添加多薪日期</a></li>
         <li><a href="../count">排班统计</a></li>
     </ul>
 
@@ -187,8 +188,6 @@
                                 class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
                         </button>
                         <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
-                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
-                        </button><button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
                                 class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
                         </button>
                     </div>
@@ -456,14 +455,14 @@
             eventOrder: 'order',
             select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                 console.log("↓↓↓select↓↓↓");
-                var newstart = moment(start).format("YYYY-MM-DD");
-                newstart = moment(newstart).format("YYYY-MM-DDThh:mm:ss");
+                var newstart = new String(moment(start).format("YYYY-MM-DD")) + "T00:00:00";
                 envdate = newstart;
                 $('input[value="true"]').prop('checked', true).trigger('change');
                 $("#myModalLabel").text("新增");
                 $('#myModal').modal();
             },
             events: function (start, end, timezone, callback) {
+                $("#calendar").fullCalendar("removeEvents");
                 var date = new Date(this.getDate());
                 // 获取当前月的数据
                 $.ajax({
@@ -613,6 +612,7 @@
                                 myevent.title = $("#sel_Pname option[value='" + result.person_id + "']").text() + ',' +
                                     $("#sel_shiftname option[value='" + result.shift_id + "']").text();
                                 //更新日程对象信息
+                                myevent.scheduleobj = result;
                                 if (myevent.color != 'black') {
                                     myevent.color = colors[result.shift_id % 5]
                                 }

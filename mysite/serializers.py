@@ -27,3 +27,9 @@ class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
         fields = ('id', 'team_id', 'name', 'tel_num', 'email')
+
+
+class MultipleWagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MultipleWages
+        fields = ('id', 'date', 'ratio')
