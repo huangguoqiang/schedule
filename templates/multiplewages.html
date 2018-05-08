@@ -93,7 +93,7 @@
             </li>
 
         </ul>
-        <a class="brand" href="index.html"><span class="first">Your</span> <span class="second">Company</span></a>
+        <a class="brand" href="../home"><span class="first"></span> <span class="second">21vianet</span></a>
     </div>
 </div>
 
@@ -239,7 +239,7 @@
                     success: function (data) {
                         if (data.count == 0) {
                             $("#myModalLabel").text("新增");
-                            $("#txt_ratio").text("设置" + mydate + "的工资倍数为：");
+                            $("#txt_ratio").text("设置" + new String(moment(start).format("YYYY-MM-DD")) + "的工资倍数为：");
                             $("#btn_delete").hide();
                             $('#myModal').modal();
                         } else {

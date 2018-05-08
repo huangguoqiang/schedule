@@ -59,6 +59,9 @@ def get_schedule_count(request):
     shift_dict = {}
     multiple_wages_dict = {}
     person_count_dict = {}
+    date_before = (datetime.datetime.strptime(date_from, "%Y-%m-%d") + datetime.timedelta(days=-1)).strftime("%Y-%m-%d")
+    schedule_before_set = Schedule.objects.filter(date=date_before).filter(team_id=team_id, is_base=False,
+                                                                           is_public=False).all()
     schedule_set = Schedule.objects.filter(date__range=(date_from, date_to)).filter(team_id=team_id, is_base=False,
                                                                                     is_public=False).all()
     shift_set = Shift.objects.filter(team_id=team_id).all()
@@ -94,6 +97,26 @@ def get_schedule_count(request):
             # 统计白夜班
             person_count_dict[obj.person_id][1][one_shift.name] = person_count_dict[obj.person_id][1][
                                                                       one_shift.name] + 1
+            # 统计双薪，三薪
+            person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3] = calculate_multiple_wages(
+                one_shift, obj, multiple_wages_dict, person_count_dict[obj.person_id][2],
+                person_count_dict[obj.person_id][3])
+
+    for obj in schedule_before_set:
+        if person_count_dict.get(obj.person_id) is None:
+            person = person_dict[obj.person_id]
+            shift_count_dict = {}
+            double_pay = 0
+            three_pay = 0
+            for k, v in shift_dict.items():
+                shift_count_dict[v.name] = 0
+            one_shift = shift_dict.get(obj.shift_id)
+            # 统计双薪，三薪
+            double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict, double_pay, three_pay)
+            person_list = [person.name, shift_count_dict, double_pay, three_pay]
+            person_count_dict[obj.person_id] = person_list
+        else:
+            one_shift = shift_dict.get(obj.shift_id)
             # 统计双薪，三薪
             person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3] = calculate_multiple_wages(
                 one_shift, obj, multiple_wages_dict, person_count_dict[obj.person_id][2],
