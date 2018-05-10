@@ -124,7 +124,7 @@ def export_excel(request):
     style0 = xlwt.easyxf('pattern: pattern solid, fore_colour 17;')
     style1 = xlwt.easyxf('pattern: pattern solid, fore_colour 48;')
     style2 = xlwt.easyxf('pattern: pattern solid, fore_colour 22;')
-    style3 = xlwt.easyxf('pattern: pattern solid')
+    style3 = xlwt.easyxf('pattern: pattern solid, fore_colour 1')
     style0.alignment = alignment
     style1.alignment = alignment
     style2.alignment = alignment
