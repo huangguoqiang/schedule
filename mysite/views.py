@@ -1,6 +1,7 @@
 import datetime
 import time
 import json
+import io
 from django.http import HttpResponse
 from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +12,8 @@ from rest_framework.decorators import list_route
 from mysite.serializers import *
 from rest_framework import status
 import copy
+import openpyxl
+import xlwt
 
 
 # Create your views here.
@@ -47,6 +50,129 @@ def multiple_wages(request):
 # 获取项目健康状态
 def get_health(request):
     return HttpResponse(json.dumps({'status': 'UP'}), content_type="application/json")
+
+
+# 获取当天某个team的值班表
+@csrf_exempt
+def export_excel(request):
+    is_public = request.POST['is_public']
+    y = int(request.POST['year'])
+    m = int(request.POST['month'])
+    mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    date_from = datetime.datetime(y, m, 1, 0, 0)
+    date_to = datetime.datetime(y, m, mdays[m], 0, 0)
+    person_dict = {}
+    shift_dict = {}
+    team_dict = {}
+    schedule_dict = {}
+    queryset_list = []
+    shift_set = Shift.objects.all()
+    person_set = Person.objects.all()
+    team_set = Team.objects.all()
+
+    for obj in shift_set:
+        shift_dict[obj.id] = obj
+
+    for obj in person_set:
+        person_dict[obj.id] = obj
+        schedule_dict[obj.id] = {}
+
+    for obj in team_set:
+        team_dict[obj.id] = obj
+        queryset = Schedule.objects.filter(date__range=(date_from, date_to), team_id=obj.id, is_base=False,
+                                           is_public=is_public).all()
+        queryset_list.append(queryset)
+
+    for my_list in queryset_list:
+        for obj in my_list:
+            if schedule_dict.get(obj.person_id) is not None:
+                schedule_dict[obj.person_id][str(obj.date)] = obj
+
+    value_team = []
+    shift_name_dict = {'Day': 'A', 'Night': 'B'}
+    for team_obj in team_set:
+        queryset = Person.objects.filter(team_id=team_obj.id).all()
+        team_name = team_obj.name + "  Team"
+        title_list = [team_name]
+        for j in range(1, (date_to - date_from).days + 2):
+            title_list.append(str(m) + "/" + str(j))
+        value_team.append(title_list)
+        for person_obj in queryset:
+            p_list = [person_obj.name]
+            for n in range(0, len(title_list) - 1):
+                if schedule_dict.get(person_obj.id) is not None:
+                    tt_dict = schedule_dict[person_obj.id]
+                    if tt_dict.get(str(date_from + datetime.timedelta(days=n))) is not None:
+                        schedule_obj = tt_dict[str(date_from + datetime.timedelta(days=n))]
+                        shift_obj = shift_dict[schedule_obj.shift_id]
+                        shift_name_key = shift_obj.name
+                        p_list.append(shift_name_dict[shift_name_key])
+                    else:
+                        p_list.append('休')
+            value_team.append(p_list)
+        value_team.append([])
+    wb = xlwt.Workbook(encoding='utf-8')
+    sheet = wb.add_sheet("排班表")
+    alignment = xlwt.Alignment()
+    alignment.horz = xlwt.Alignment.HORZ_CENTER  # 水平居中
+    alignment.vert = xlwt.Alignment.VERT_CENTER  # 垂直居中
+    borders = xlwt.Borders()
+    borders.left = 1
+    borders.right = 1
+    borders.top = 1
+    borders.bottom = 1
+    style0 = xlwt.easyxf('pattern: pattern solid, fore_colour 17;')
+    style1 = xlwt.easyxf('pattern: pattern solid, fore_colour 48;')
+    style2 = xlwt.easyxf('pattern: pattern solid, fore_colour 22;')
+    style3 = xlwt.easyxf('pattern: pattern solid')
+    style0.alignment = alignment
+    style1.alignment = alignment
+    style2.alignment = alignment
+    style3.alignment = alignment
+    style0.borders = borders
+    style1.borders = borders
+    style2.borders = borders
+    style3.borders = borders
+    sheet.write_merge(0, 0, 0, 5, 'A', style0)
+    sheet.write_merge(0, 0, 6, 11, 'Day Shift', style0)
+    sheet.write_merge(0, 0, 12, 17, '8:00~20:00', style0)
+    sheet.write_merge(1, 1, 0, 5, 'B', style1)
+    sheet.write_merge(1, 1, 6, 11, 'Night Shift', style1)
+    sheet.write_merge(1, 1, 12, 17, '20:00~8:00', style1)
+    sheet.write_merge(2, 2, 0, 5, '', style3)
+    sheet.write_merge(2, 2, 6, 11, 'Normal', style3)
+    sheet.write_merge(2, 2, 12, 17, '8:30~17:30', style3)
+    sheet.write_merge(3, 3, 0, 5, '休', style2)
+    sheet.write_merge(3, 3, 6, 11, 'Vacation', style2)
+    sheet.write_merge(3, 3, 12, 17, '----', style2)
+    for i in range(0, len(value_team)):
+        for j in range(0, len(value_team[i])):
+            if value_team[i][j] == 'A':
+                sheet.write(i + 6, j + 1, value_team[i][j], style0)
+            elif value_team[i][j] == 'B':
+                sheet.write(i + 6, j + 1, value_team[i][j], style1)
+            elif value_team[i][j] == '休':
+                sheet.write(i + 6, j + 1, value_team[i][j], style2)
+            else:
+                if j == 0:
+                    sheet.write_merge(i + 6, i + 6, 0, 1, value_team[i][j], style3)
+                else:
+                    sheet.write(i + 6, j + 1, value_team[i][j], style3)
+
+    # 返回文件流到浏览端下载，浏览端必须以form提交方式方能下载成功！
+    bio = io.BytesIO()
+
+    wb.save(bio)  # 这点很重要，传给save函数的不是保存文件名，而是一个StringIO流
+    response = HttpResponse()
+
+    response['Content-Type'] = 'application/vnd.ms-excel'  # 文件类型
+    response['Content-Disposition'] = 'attachment;filename={0}'.format("Excel.xls")
+
+    bio.seek(0)  # 保存流
+    response.write(bio.getvalue())
+    print("写入数据成功！")
+    return response
+    # return HttpResponse(json.dumps({'status': 'UP'}), content_type="application/json")
 
 
 # 根據team_id,開始日期，結束日期統計
@@ -134,7 +260,6 @@ def get_schedule_today(request):
     my_dict = {}
     queryset = Schedule.objects.filter(date=today, team_id=team_id, is_base=False, is_public=False).all()
     for obj in queryset:
-        print(obj.date)
         person = Person.objects.filter(id=obj.person_id).first()
         one_shift = Shift.objects.filter(id=obj.shift_id).first()
         my_dict['date'] = today

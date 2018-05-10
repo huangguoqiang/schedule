@@ -142,12 +142,20 @@
         <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li> 排班表 <span class="divider">/</span></li>
         <li class="fc-right">
-            <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 自动生成下一期排班</button>
+            <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 自动生成下三个月排班</button>
+        </li>
+        <li class="pull-right">
+            <form action="../export_excel/" method="post">
+                <input type="hidden" name="year" id="year"/>
+                <input type="hidden" name="month" id="month"/>
+                <input type="hidden" name="is_public" id="is_public"/>
+                <input type="submit" class="btn btn-primary" value="导出本月所有Team的排班表"/>
+            </form>
+            {#            <button class="btn btn-primary" onclick="export_excel()"><i class="icon-plus"></i> 导出本月所有Team的排班表</button>#}
         </li>
         <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
     </ul>
-
     <div class="container-fluid">
         <div id='wrap'>
 
@@ -402,6 +410,26 @@
         });
 
     }
+
+    function export_excel() {
+        $.ajax({
+            url: '../export_excel/',
+            type: "POST",
+            dataType: 'json',
+            data: {
+                is_public: 'False',
+                year: events_date.getFullYear(),
+                month: events_date.getMonth() + 1,
+            },
+            success: function (data) {
+
+            },
+            error: function (data, status, er) {
+                console.log(data);
+            }
+        });
+
+    }
 </script>
 <script>
     $(document).ready(function () {
@@ -463,16 +491,19 @@
             },
             events: function (start, end, timezone, callback) {
                 $("#calendar").fullCalendar("removeEvents");
-                var date = new Date(this.getDate());
+                var events_date = new Date(this.getDate());
                 // 获取当前月的数据
+                $("#year").val(events_date.getFullYear());
+                $("#month").val(events_date.getMonth() + 1);
+                $("#is_public").val('False');
                 $.ajax({
                     url: '../api/schedule/list_by_date/',
                     type: "GET",
                     dataType: 'json',
                     data: {
                         team_id: $("#sel_teamname").val(),
-                        year: date.getFullYear(),
-                        month: date.getMonth() + 1,
+                        year: events_date.getFullYear(),
+                        month: events_date.getMonth() + 1,
                         is_public: false
                     },
                     success: function (data) {
