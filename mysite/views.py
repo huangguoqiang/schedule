@@ -1,3 +1,5 @@
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
 import datetime
 import time
 import json
@@ -12,6 +14,7 @@ from rest_framework.decorators import list_route
 from mysite.serializers import *
 from rest_framework import status
 import copy
+import math
 import openpyxl
 import xlwt
 
@@ -52,7 +55,7 @@ def get_health(request):
     return HttpResponse(json.dumps({'status': 'UP'}), content_type="application/json")
 
 
-# 获取当天某个team的值班表
+# 导出某月的excel排班表
 @csrf_exempt
 def export_excel(request):
     is_public = request.POST['is_public']
@@ -89,10 +92,13 @@ def export_excel(request):
                 schedule_dict[obj.person_id][str(obj.date)] = obj
 
     value_team = []
-    shift_name_dict = {'Day': 'A', 'Night': 'B'}
+    shift_name_dict = {'Day': 'A', 'Night': 'B', 'All-Day': 'Duty'}
     for team_obj in team_set:
         queryset = Person.objects.filter(team_id=team_obj.id).all()
-        team_name = team_obj.name + "  Team"
+        if team_obj.name == 'Leaders':
+            team_name = team_obj.name
+        else:
+            team_name = team_obj.name + "  Team"
         title_list = [team_name]
         for j in range(1, (date_to - date_from).days + 2):
             title_list.append(str(m) + "/" + str(j))
@@ -108,11 +114,15 @@ def export_excel(request):
                         shift_name_key = shift_obj.name
                         p_list.append(shift_name_dict[shift_name_key])
                     else:
-                        p_list.append('休')
+                        if team_obj.name == 'Leaders':
+                            p_list.append('Off')
+                        else:
+                            p_list.append('休')
             value_team.append(p_list)
         value_team.append([])
     wb = xlwt.Workbook(encoding='utf-8')
     sheet = wb.add_sheet("排班表")
+    # 设置cell的style
     alignment = xlwt.Alignment()
     alignment.horz = xlwt.Alignment.HORZ_CENTER  # 水平居中
     alignment.vert = xlwt.Alignment.VERT_CENTER  # 垂直居中
@@ -121,18 +131,21 @@ def export_excel(request):
     borders.right = 1
     borders.top = 1
     borders.bottom = 1
-    style0 = xlwt.easyxf('pattern: pattern solid, fore_colour 17;')
-    style1 = xlwt.easyxf('pattern: pattern solid, fore_colour 48;')
-    style2 = xlwt.easyxf('pattern: pattern solid, fore_colour 22;')
-    style3 = xlwt.easyxf('pattern: pattern solid, fore_colour 1')
+    style0 = xlwt.easyxf('pattern: pattern solid, fore_colour 17;')  # green
+    style1 = xlwt.easyxf('pattern: pattern solid, fore_colour 48;')  # blue
+    style2 = xlwt.easyxf('pattern: pattern solid, fore_colour 22;')  # grey
+    style3 = xlwt.easyxf('pattern: pattern solid, fore_colour 1')  # white
+    style4 = xlwt.easyxf('pattern: pattern solid, fore_colour 52')  # yellow
     style0.alignment = alignment
     style1.alignment = alignment
     style2.alignment = alignment
     style3.alignment = alignment
+    style4.alignment = alignment
     style0.borders = borders
     style1.borders = borders
     style2.borders = borders
     style3.borders = borders
+    style4.borders = borders
     sheet.write_merge(0, 0, 0, 5, 'A', style0)
     sheet.write_merge(0, 0, 6, 11, 'Day Shift', style0)
     sheet.write_merge(0, 0, 12, 17, '8:00~20:00', style0)
@@ -145,6 +158,7 @@ def export_excel(request):
     sheet.write_merge(3, 3, 0, 5, '休', style2)
     sheet.write_merge(3, 3, 6, 11, 'Vacation', style2)
     sheet.write_merge(3, 3, 12, 17, '----', style2)
+    # 添加cell内容
     for i in range(0, len(value_team)):
         for j in range(0, len(value_team[i])):
             if value_team[i][j] == 'A':
@@ -152,6 +166,10 @@ def export_excel(request):
             elif value_team[i][j] == 'B':
                 sheet.write(i + 6, j + 1, value_team[i][j], style1)
             elif value_team[i][j] == '休':
+                sheet.write(i + 6, j + 1, value_team[i][j], style2)
+            elif value_team[i][j] == 'Duty':
+                sheet.write(i + 6, j + 1, value_team[i][j], style4)
+            elif value_team[i][j] == 'Off':
                 sheet.write(i + 6, j + 1, value_team[i][j], style2)
             else:
                 if j == 0:
@@ -271,43 +289,31 @@ def get_schedule_today(request):
     return HttpResponse(json.dumps(today_list), content_type="application/json")
 
 
-# schedule view
-class ScheduleViewSet(viewsets.ModelViewSet):
-    queryset = Schedule.objects.all()
-    serializer_class = ScheduleSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'team_id', 'person_id', 'date', 'is_public')
-
-    @list_route()
-    def list_by_date(self, request):
-        y = int(request.GET['year'])
-        m = int(request.GET['month'])
-        mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        date_from = datetime.datetime(y, m, 1, 0, 0)
-        date_to = datetime.datetime(y, m, mdays[m], 0, 0)
-        queryset = self.filter_queryset(self.get_queryset().filter(date__range=(date_from, date_to), is_base=False))
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
 # 自动生成下三个月排班
 @csrf_exempt
 def auto_generate(request):
     team_id = request.POST['team_id']
     is_public = request.POST['is_public']
     lastest_obj = Schedule.objects.filter(team_id=team_id, is_base=False, is_public=is_public).order_by('-date').first()
+    oldest_obj = Schedule.objects.filter(team_id=team_id, is_base=True, is_public=is_public).order_by('date').first()
     queryset_base = Schedule.objects.filter(team_id=team_id, is_base=True, is_public=is_public).all()
-    sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
+    # 计算当前最新排班的日期与最老基础排班的日期之间差的天数
+    sub = lastest_obj.date - oldest_obj.date + datetime.timedelta(days=1)
+    # 计算一共有几天基础排班
+    oldest_date = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
+    newest_date = datetime.datetime.strptime('1900-10-31', '%Y-%m-%d')
+    for obj in queryset_base:
+        if oldest_date > obj.date:
+            oldest_date = obj.date
+        if newest_date < obj.date:
+            newest_date = obj.date
+    base_days = (newest_date - oldest_date).days + 1
+    # 添加新的排班
     i = 0
-    while i < 11:
+    while i < math.ceil(90 / base_days):
         for obj in queryset_base:
             item = copy.copy(obj)
-            item.date = item.date + sub + datetime.timedelta(days=i * 8)
+            item.date = item.date + sub + datetime.timedelta(days=i * base_days)
             new_schedule_obj = Schedule.objects.create(team_id=item.team_id, date=item.date,
                                                        person_id=item.person_id, shift_id=item.shift_id,
                                                        is_master=item.is_master, is_base=False, is_public=is_public)
@@ -325,9 +331,11 @@ def auto_generate_everyday(request):
         for obj_team in queryset_team:
             lastest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=False, is_public=is_public).order_by(
                 '-date').first()
+            oldest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=True, is_public=is_public).order_by(
+                'date').first()
             if lastest_obj is not None:
-                queryset_base = Schedule.objects.filter(team_id=obj_team.id, is_base=True).all()
-                sub = lastest_obj.date - queryset_base[0].date + datetime.timedelta(days=1)
+                queryset_base = Schedule.objects.filter(team_id=obj_team.id, is_base=True, is_public=is_public).all()
+                sub = lastest_obj.date - oldest_obj.date + datetime.timedelta(days=1)
                 if sub < datetime.timedelta(days=97):
                     for obj in queryset_base:
                         item = copy.copy(obj)
@@ -351,8 +359,10 @@ def generate(request):
     i = 0
     num = len(mist)
     oldest_date = datetime.datetime.strptime('2099-10-31', '%Y-%m-%d')
+    newest_date = datetime.datetime.strptime('1900-10-31', '%Y-%m-%d')
     team_id = mist[0]['team_id']
     Schedule.objects.filter(team_id=team_id, is_base=True, is_public=is_public).delete()
+    # 存储基础排班，并计算基础排班的天数
     while i < num:
         mist[i]['date'] = datetime.datetime.strptime(mist[i]['date'], '%Y-%m-%d')
         new_schedule_base_obj = Schedule.objects.create(team_id=mist[i]['team_id'], person_id=mist[i]['person_id'],
@@ -363,14 +373,18 @@ def generate(request):
         new_schedule_base_obj.save()
         if oldest_date > mist[i]['date']:
             oldest_date = mist[i]['date']
+        if newest_date < mist[i]['date']:
+            newest_date = mist[i]['date']
         i = i + 1
+    base_days = (newest_date - oldest_date).days + 1
+
     Schedule.objects.filter(team_id=team_id, is_base=False, is_public=is_public).filter(date__gte=oldest_date).delete()
     i = 0
-    while i < 12:
+    while i < math.ceil(90 / base_days):
         j = 0
         while j < num:
             item = mist[j].copy()
-            item['date'] = item['date'] + datetime.timedelta(days=i * 8)
+            item['date'] = item['date'] + datetime.timedelta(days=i * base_days)
             new_schedule_obj = Schedule.objects.create(team_id=item['team_id'], date=item['date'],
                                                        person_id=item['person_id'], shift_id=item['shift_id'],
                                                        is_master=item['is_master'], is_base=False,
@@ -378,12 +392,37 @@ def generate(request):
             new_schedule_obj.save()
             j = j + 1
         i = i + 1
+
     return HttpResponse(request)
 
 
 @csrf_exempt
 def send_notification(request):
     return HttpResponse(request)
+
+
+# schedule view
+class ScheduleViewSet(viewsets.ModelViewSet):
+    queryset = Schedule.objects.all()
+    serializer_class = ScheduleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('id', 'team_id', 'person_id', 'date', 'is_public')
+
+    @list_route()
+    def list_by_date(self, request):
+        y = int(request.GET['year'])
+        m = int(request.GET['month'])
+        mdays = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        date_from = datetime.datetime(y, m, 1, 0, 0)
+        date_to = datetime.datetime(y, m, mdays[m], 0, 0)
+        queryset = self.filter_queryset(self.get_queryset().filter(date__range=(date_from, date_to), is_base=False))
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 # team view
@@ -443,7 +482,7 @@ def calculate_multiple_wages(one_shift, schedule_obj, multiple_wages_dict, doubl
     str_time_end = one_shift.time_end.strftime("%Y-%m-%d %H:%M:%S")
     date_time_end = datetime.datetime.strptime(str_time_end, '%Y-%m-%d %H:%M:%S')
     date_time_end = date_time_end + datetime.timedelta(days=(schedule_obj.date.date() - date_time_end.date()).days)
-    if date_time_start > date_time_end:
+    if date_time_start >= date_time_end:
         date_time_end = date_time_end + datetime.timedelta(days=1)
         str_time_mid = date_time_end.date().strftime("%Y-%m-%d") + " 00:00:00"
         date_time_mid = datetime.datetime.strptime(str_time_mid, '%Y-%m-%d %H:%M:%S')

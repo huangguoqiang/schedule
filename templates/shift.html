@@ -30,9 +30,13 @@
                 success: function (data) {
                     var tbBody = ""
                     $.each(data.results, function (index, value) {
-                        tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
-                            "</td>" + "<td>" + value.name + "</td>" + "<td>" + moment(value.time_start, "HH:mm:ss").format("HH:mm") + "~" +
-                            moment(value.time_end, "HH:mm:ss").format("HH:mm") + "</td><td>" +
+                        var time_start = moment(value.time_start, "HH:mm:ss").format("HH:mm");
+                        var time_end = moment(value.time_end, "HH:mm:ss").format("HH:mm");
+                        if (time_start == time_end) {
+                            time_end = time_end + 'N'
+                        }
+                        tbBody += "<tr><td>" + (index + 1) + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
+                            "</td>" + "<td>" + value.name + "</td>" + "<td>" + time_start + "~" + time_end + "</td><td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
                             '<a href="#" onclick = deleteshift(' + value.id +
                             ') role="button" data-toggle="modal"><i class="icon-remove"></i></a>' +
@@ -109,14 +113,14 @@
                                 window.location.reload();
                             } else {
                                 alert("添加失败，请重试");
-                                $('#myModal').modal("show");
+                                $('#myModal').modal('show');
                             }
                         }
                     });
 
                 } else {
+                    $('#myModal').modal('show');
                     alert("以上数据不能为空，请重试");
-                    $('#myModal').modal("show");
                 }
             } else {
                 if (shift.team_id != $("#sel_teamname").val() ||
@@ -154,7 +158,6 @@
         $(function () {
             startTeam();
             $("#sel_teamname option:first").prop("selected", 'selected');
-            getshift();
         });
 
         function startTeam() {
@@ -177,6 +180,7 @@
 
                         ddl.append(opt);
                     });
+                    getshift();
 
                 },
                 complete: function () {
@@ -381,24 +385,6 @@
                     <li><a href="#">Next</a></li>
                 </ul>
             </div>
-
-            <div class="modal small hide fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-                 aria-hidden="true">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="myModalLabel">Delete Confirmation</h3>
-                </div>
-                <div class="modal-body">
-                    <p class="error-text"><i class="icon-warning-sign modal-icon"></i>Are you sure you want to delete
-                        the user?</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                    <button class="btn btn-danger" data-dismiss="modal">Delete</button>
-                </div>
-            </div>
-
-
         </div>
     </div>
 </div>
@@ -422,10 +408,11 @@
             // options
             //startTime: new Date(0, 0, 0, 8, 0, 0),
             // items in the dropdown are separated by at interval minutes
-            //interval: 60
+            //interval: 1
         });
         $('#txt_time_end').timepicker({
             timeFormat: 'HH:mm',
+            //interval: 1
         });
     });
 </script>

@@ -195,6 +195,9 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal"><span
                                 class="glyphicon glyphicon-remove" aria-hidden="true"></span>关闭
                         </button>
+                        <button type="button" id="btn_delete" class="btn btn-primary" data-dismiss="modal"><span
+                                class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>删除
+                        </button>
                         <button type="button" id="btn_submit" class="btn btn-primary" data-dismiss="modal"><span
                                 class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>保存
                         </button>
@@ -268,9 +271,13 @@
                 var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
+                    var time_start = moment(result[key].time_start, "HH:mm:ss").format("HH:mm");
+                    var time_end = moment(result[key].time_end, "HH:mm:ss").format("HH:mm");
+                    if (time_start == time_end) {
+                        time_end = time_end + 'N'
+                    }
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
-                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
+                        "(" + time_start + "~" + time_end + ")</option>";
                     ddl.append(opt);
                 });
 
@@ -281,9 +288,13 @@
                 var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
+                    var time_start = moment(result[key].time_start, "HH:mm:ss").format("HH:mm");
+                    var time_end = moment(result[key].time_end, "HH:mm:ss").format("HH:mm");
+                    if (time_start == time_end) {
+                        time_end = time_end + 'N'
+                    }
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
-                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
+                        "(" + time_start + "~" + time_end + ")</option>";
                     dd2.append(opt);
                 });
 
@@ -339,6 +350,8 @@
                 //转成Json对象
                 var result = eval(data.results);
                 //循环遍历 下拉框绑定
+                opt = "<option value='-1'>" + "请选择" + "</option>";
+                ddl3.append(opt);
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
                     ddl3.append(opt);
@@ -449,6 +462,7 @@
                 scheduleobj.date = newstart;
                 {#$('input[value="true"]').prop('checked', true).trigger('change');#}
                 $("#myModalLabel").text("新增");
+                $("#btn_delete").hide();
                 $('#myModal').modal();
             },
             events: function (start, end, timezone, callback) {
@@ -458,7 +472,7 @@
             eventClick: function (event, element) {
                 scheduleobj = new Object();
                 scheduleobj = event;
-                var mylist = eventslist[event.index];
+                var mylist = eventslist[event.id];
                 var m = 0, n = 0;
                 for (var i = 0; i < mylist.length; i++) {
                     if (mylist[i].order == 0) {
@@ -480,6 +494,7 @@
                     }
                 }
                 $("#myModalLabel").text("更新");
+                $("#btn_delete").show();
                 $('#myModal').modal();
             }
         });
@@ -513,7 +528,16 @@
                 $("#sel_MPname2 option:first").prop("selected", 'selected');
                 $("#sel_SPname2 option:first").prop("selected", 'selected');
             }
-        })
+        });
+
+        $("#btn_delete").click(function () {
+            eventslist.splice(scheduleobj.id, 1);
+            for (var i = scheduleobj.id; i < eventslist.length; i++) {
+                eventslist[i].id = eventslist[i].id - 1;
+            }
+            $("#calendar").fullCalendar("removeEvents", scheduleobj.id);
+        });
+
         $("#btn_submit").click(function () {
             if ($("#myModalLabel").text() == '新增') {
                 var title = $("#sel_MPname1").find("option:selected").text() + ',' +
@@ -528,11 +552,12 @@
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_shiftname1").val(), false, 0);
                     titlesum = titlesum + "\n" + title;
                 }
-
-                title = $("#sel_MPname2").find("option:selected").text() + ',' +
-                    $("#sel_shiftname2").find("option:selected").text();
-                pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
-                titlesum = titlesum + "\n" + title;
+                if ($("#sel_MPname2").val() != -1) {
+                    title = $("#sel_MPname2").find("option:selected").text() + ',' +
+                        $("#sel_shiftname2").find("option:selected").text();
+                    pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
+                    titlesum = titlesum + "\n" + title;
+                }
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
@@ -540,10 +565,10 @@
                     titlesum = titlesum + "\n" + title;
                 }
                 var myevent = {
+                    id: index,
                     title: titlesum,
                     start: scheduleobj.date,
                     date: scheduleobj.date,
-                    index: index,
                 };
                 eventslist.push(list);
                 list = [];
@@ -562,11 +587,12 @@
                     pushEvents(title, $("#sel_SPname1").val(), $("#sel_shiftname1").val(), false, 0);
                     titlesum = titlesum + "\n" + title;
                 }
-
-                title = $("#sel_MPname2").find("option:selected").text() + ',' +
-                    $("#sel_shiftname2").find("option:selected").text();
-                pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
-                titlesum = titlesum + "\n" + title;
+                if ($("#sel_MPname2").val() != -1) {
+                    title = $("#sel_MPname2").find("option:selected").text() + ',' +
+                        $("#sel_shiftname2").find("option:selected").text();
+                    pushEvents(title, $("#sel_MPname2").val(), $("#sel_shiftname2").val(), true, 1);
+                    titlesum = titlesum + "\n" + title;
+                }
                 if ($("#sel_SPname2").val() != -1) {
                     title = $("#sel_SPname2").find("option:selected").text() + ',' +
                         $("#sel_shiftname2").find("option:selected").text();
@@ -574,7 +600,7 @@
                     titlesum = titlesum + "\n" + title;
                 }
                 scheduleobj.title = titlesum;
-                eventslist[scheduleobj.index] = list;
+                eventslist[scheduleobj.id] = list;
                 list = [];
                 //更新日程对象信息
                 $('#calendar').fullCalendar('updateEvent', scheduleobj);
@@ -609,13 +635,13 @@
         }
         //先去重
         var newlist = oldlist.unique3();
-        if (newlist.length != 8) {
+        {% comment %}if (newlist.length != 8) {
             alert("您输入的排班天数大于或小于8天，请重新输入");
             eventslist = [];
             index = 0;
             $('#calendar').fullCalendar('removeEvents');
             return
-        }
+        }{% endcomment %}
         // 先排序，然后转时间戳
         newlist.sort(function (a, b) {
             return a > b ? 1 : -1; // 这里改为大于号
@@ -632,9 +658,6 @@
         }
         if (flag == false) {
             alert("您输入的排班时间不连续，请重新输入");
-            eventslist = [];
-            index = 0;
-            $('#calendar').fullCalendar('removeEvents');
             return
         }
         //Ajax

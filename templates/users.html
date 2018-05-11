@@ -27,7 +27,7 @@
                 success: function (data) { // 获取当前月的数据
                     var tbBody = ""
                     $.each(data.results, function (index, value) {
-                        tbBody += "<tr><td>" + value.id + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
+                        tbBody += "<tr><td>" + (index + 1) + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
                             "</td>" + "<td>" + value.name + "<td>" + value.tel_num + "<td>" + value.email + "</td>" + "<td>" +
                             '<a href="#" onclick= update(' + value.id + ')><i class="icon-pencil"></i></a>' +
                             '<a href="#" onclick = deleteuser(' + value.id +
@@ -235,7 +235,7 @@
 
                         ddl.append(opt);
                     });
-
+                    getbyteamid();
                 },
                 complete: function () {
 
@@ -259,7 +259,6 @@
         $(function () {
             startTeam();
             $("#sel_teamname option:first").prop("selected", 'selected');
-            getbyteamid();
         });
     </script>
     <!-- Demo page code -->
