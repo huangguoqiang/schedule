@@ -73,32 +73,34 @@
 <!--<![endif]-->
 
 <div class="navbar">
-    <div class="navbar-inner">
-        <ul class="nav pull-right">
+    {#    <div class="navbar-inner">#}
+    {#        <ul class="nav pull-right">#}
+    {##}
+    {#            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>#}
+    {##}
+    {##}
+    {#        </ul>#}
+    {#        <a class="brand" href="../home"><span class="first"></span> <span class="second">21vianet</span></a>#}
+    {#    </div>#}
+    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <div class="pull-right">>
+        <li id="fat-menu" class="dropdown">
+            <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-user-md"></i> Jack Smith
+                <i class="icon-caret-down"></i>
+            </a>
 
-            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>
-            <li id="fat-menu" class="dropdown">
-                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-user"></i> Jack Smith
-                    <i class="icon-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a tabindex="-1" href="#">My Account</a></li>
-                    <li class="divider"></li>
-                    <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
-                    <li class="divider visible-phone"></li>
-                    <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
-                </ul>
-            </li>
-
-        </ul>
-        <a class="brand" href="../home"><span class="first"></span> <span class="second">21vianet</span></a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="#">My Account</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
+                <li class="divider visible-phone"></li>
+                <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+            </ul>
+        </li>
     </div>
 </div>
 
-
-<div class="copyrights">Collect from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></div>
 <div class="sidebar-nav">
     <form class="search form-inline">
         <input type="text" placeholder="Search...">
@@ -261,7 +263,9 @@
             type: "GET",
             async: false,
             dataType: 'json',
-            data: {},
+            data: {
+                is_delete: false,
+            },
             success: function (data) {
                 var ddl = $("#sel_teamname");
                 //删除节点
@@ -317,6 +321,7 @@
             dataType: 'json',
             data: {
                 team_id: $("#sel_teamname").val(),
+                is_delete: false,
             },
             success: function (data) {
                 var ddl = $("#sel_shiftname");
@@ -326,12 +331,15 @@
                 var result = eval(data.results);
                 //循环遍历 下拉框绑定
                 $(result).each(function (key) {
+                    var time_start = moment(result[key].time_start, "HH:mm:ss").format("HH:mm");
+                    var time_end = moment(result[key].time_end, "HH:mm:ss").format("HH:mm");
+                    if (time_start == time_end) {
+                        time_end = time_end + 'N'
+                    }
                     var opt = "<option value='" + result[key].id + "'>" + result[key].name +
-                        "(" + moment(result[key].time_start, "HH:mm:ss").format("HH:mm") + "~" +
-                        moment(result[key].time_end, "HH:mm:ss").format("HH:mm") + ")</option>";
+                        "(" + time_start + "~" + time_end + ")</option>";
                     ddl.append(opt);
-                    shift_dict[result[key].id] = [result[key].name, moment(result[key].time_start,
-                        "HH:mm:ss").format("HH:mm"), moment(result[key].time_end, "HH:mm:ss").format("HH:mm")]
+                    shift_dict[result[key].id] = [result[key].name, time_start, time_end]
                 });
 
             },
@@ -361,6 +369,7 @@
             dataType: 'json',
             data: {
                 team_id: $("#sel_teamname").val(),
+                is_delete: false,
             },
             success: function (data) {
                 var ddl1 = $("#sel_Pname");
@@ -481,6 +490,7 @@
             eventLimit: true, // allow "more" link when too many events
             selectable: true,
             eventOrder: 'order',
+            themeSystem: 'bootstrap3',
             select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                 console.log("↓↓↓select↓↓↓");
                 var newstart = new String(moment(start).format("YYYY-MM-DD")) + "T00:00:00";
@@ -559,7 +569,13 @@
                         }
                     }
                 });
-            }
+            },
+            eventMouseover: function (calEvent, jsEvent, view) {//鼠标在日程区块上时触发
+                $(this).css('cursor', 'pointer');
+            },
+            eventMouseout: function (calEvent, jsEvent, view) {//鼠标从日程区块离开时触发
+                $(this).css('cursor-color', '');
+            },
         });
         $('#myModal').on('hidden.bs.modal', function () {
             // 执行一些动作...

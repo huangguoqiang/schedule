@@ -13,6 +13,7 @@ class MultipleWages(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=200)
+    is_delete = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -24,6 +25,7 @@ class Shift(models.Model):
     time_start = models.TimeField()
     time_end = models.TimeField()
     order = models.PositiveSmallIntegerField()
+    is_delete = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -34,6 +36,8 @@ class Person(models.Model):
     name = models.CharField(max_length=30)
     tel_num = models.CharField(max_length=20)
     email = models.CharField(max_length=40, unique=True)
+    slack_id = models.CharField(max_length=128, null=True)
+    is_delete = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

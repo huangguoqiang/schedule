@@ -224,47 +224,52 @@ def get_schedule_count(request):
     for obj in schedule_set:
         if person_count_dict.get(obj.person_id) is None:
             person = person_dict[obj.person_id]
-            shift_count_dict = {}
+            # shift_count_dict = {}
+            night_shift_num = 0
             double_pay = 0
             three_pay = 0
-            for k, v in shift_dict.items():
-                shift_count_dict[v.name] = 0
+            # for k, v in shift_dict.items():
+            #     shift_count_dict[v.name] = 0
             one_shift = shift_dict.get(obj.shift_id)
             # 统计白夜班
-            shift_count_dict[one_shift.name] = shift_count_dict[one_shift.name] + 1
+            # shift_count_dict[one_shift.name] = shift_count_dict[one_shift.name] + 1
             # 统计双薪，三薪
-            double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict, double_pay, three_pay)
-            person_list = [person.name, shift_count_dict, double_pay, three_pay]
+            night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
+                                                                              night_shift_num, double_pay, three_pay)
+            person_list = [person.name, night_shift_num, double_pay, three_pay]
             person_count_dict[obj.person_id] = person_list
         else:
             one_shift = shift_dict.get(obj.shift_id)
             # 统计白夜班
-            person_count_dict[obj.person_id][1][one_shift.name] = person_count_dict[obj.person_id][1][
-                                                                      one_shift.name] + 1
+            # person_count_dict[obj.person_id][1][one_shift.name] = person_count_dict[obj.person_id][1][
+            #                                                           one_shift.name] + 1
             # 统计双薪，三薪
-            person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3] = calculate_multiple_wages(
-                one_shift, obj, multiple_wages_dict, person_count_dict[obj.person_id][2],
-                person_count_dict[obj.person_id][3])
-
+            person_count_dict[obj.person_id][1], person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][
+                3] = calculate_multiple_wages(one_shift, obj, multiple_wages_dict, person_count_dict[obj.person_id][1],
+                                              person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3])
+    # 统计每月最后一天到每月1号那个班次的三薪
     for obj in schedule_before_set:
         if person_count_dict.get(obj.person_id) is None:
             person = person_dict[obj.person_id]
-            shift_count_dict = {}
+            # shift_count_dict = {}
+            night_shift_num = 0
             double_pay = 0
             three_pay = 0
-            for k, v in shift_dict.items():
-                shift_count_dict[v.name] = 0
+            # for k, v in shift_dict.items():
+            #     shift_count_dict[v.name] = 0
             one_shift = shift_dict.get(obj.shift_id)
             # 统计双薪，三薪
-            double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict, double_pay, three_pay)
-            person_list = [person.name, shift_count_dict, double_pay, three_pay]
+            night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
+                                                                              night_shift_num, double_pay, three_pay)
+            person_list = [person.name, 0, double_pay, three_pay]
             person_count_dict[obj.person_id] = person_list
         else:
             one_shift = shift_dict.get(obj.shift_id)
+            night_shift_num = 0
             # 统计双薪，三薪
-            person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3] = calculate_multiple_wages(
-                one_shift, obj, multiple_wages_dict, person_count_dict[obj.person_id][2],
-                person_count_dict[obj.person_id][3])
+            night_shift_num, person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][
+                3] = calculate_multiple_wages(one_shift, obj, multiple_wages_dict, night_shift_num,
+                                              person_count_dict[obj.person_id][2], person_count_dict[obj.person_id][3])
 
     return HttpResponse(json.dumps(person_count_dict), content_type="application/json")
 
@@ -430,7 +435,20 @@ class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all().order_by('id')
     serializer_class = TeamSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'name')
+    filter_fields = ('id', 'name', 'is_delete')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Schedule.objects.filter(team_id=instance.id, is_base=True).delete()
+        bool_list = [True, False]
+        for x in bool_list:
+            Schedule.objects.filter(team_id=instance.id, is_base=False, is_public=x).filter(
+                date__gt=datetime.datetime.now().strftime('%Y-%m-%d')).delete()
+        Shift.objects.filter(team_id=instance.id).update(is_delete=True)
+        Person.objects.filter(team_id=instance.id).update(is_delete=True)
+        Team.objects.filter(id=instance.id).update(is_delete=True)
+        # self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # shift view
@@ -438,7 +456,18 @@ class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all().order_by('id')
     serializer_class = ShiftSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'team_id', 'name')
+    filter_fields = ('id', 'team_id', 'name', 'is_delete')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Schedule.objects.filter(shift_id=instance.id, is_base=True).delete()
+        bool_list = [True, False]
+        for x in bool_list:
+            Schedule.objects.filter(shift_id=instance.id, is_base=False, is_public=x).filter(
+                date__gt=datetime.datetime.now().strftime('%Y-%m-%d')).delete()
+        # self.perform_destroy(instance)
+        Shift.objects.filter(id=instance.id).update(is_delete=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # person view
@@ -446,7 +475,18 @@ class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all().order_by('id')
     serializer_class = PersonSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_fields = ('id', 'team_id', 'name', 'email')
+    filter_fields = ('id', 'team_id', 'name', 'email', 'slack_id', 'is_delete')
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        Schedule.objects.filter(person_id=instance.id, is_base=True).delete()
+        bool_list = [True, False]
+        for x in bool_list:
+            Schedule.objects.filter(person_id=instance.id, is_base=False, is_public=x).filter(
+                date__gt=datetime.datetime.now().strftime('%Y-%m-%d')).delete()
+        # self.perform_destroy(instance)
+        Person.objects.filter(id=instance.id).update(is_delete=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # MultipleWages view
@@ -474,7 +514,7 @@ class MultipleWagesViewSet(viewsets.ModelViewSet):
 
 
 # 计算值班人员某个时间段的双薪，三薪
-def calculate_multiple_wages(one_shift, schedule_obj, multiple_wages_dict, double_pay, three_pay):
+def calculate_multiple_wages(one_shift, schedule_obj, multiple_wages_dict, night_shift_num, double_pay, three_pay):
     str_time_start = one_shift.time_start.strftime("%Y-%m-%d %H:%M:%S")
     date_time_start = datetime.datetime.strptime(str_time_start, '%Y-%m-%d %H:%M:%S')
     date_time_start = date_time_start + datetime.timedelta(
@@ -483,23 +523,30 @@ def calculate_multiple_wages(one_shift, schedule_obj, multiple_wages_dict, doubl
     date_time_end = datetime.datetime.strptime(str_time_end, '%Y-%m-%d %H:%M:%S')
     date_time_end = date_time_end + datetime.timedelta(days=(schedule_obj.date.date() - date_time_end.date()).days)
     if date_time_start >= date_time_end:
+        night_shift_num = night_shift_num + 1
         date_time_end = date_time_end + datetime.timedelta(days=1)
         str_time_mid = date_time_end.date().strftime("%Y-%m-%d") + " 00:00:00"
         date_time_mid = datetime.datetime.strptime(str_time_mid, '%Y-%m-%d %H:%M:%S')
         if multiple_wages_dict.get(date_time_start.date().strftime("%Y-%m-%d")) is not None:
             if multiple_wages_dict[date_time_start.date().strftime("%Y-%m-%d")] == 2:
-                double_pay = double_pay + int((date_time_mid - date_time_start).seconds / (60 * 60))
+                double_pay = double_pay + int((date_time_mid - date_time_start).days) * 24 + int(
+                    (date_time_mid - date_time_start).seconds / (60 * 60))
             elif multiple_wages_dict[date_time_start.date().strftime("%Y-%m-%d")] == 3:
-                three_pay = three_pay + int((date_time_mid - date_time_start).seconds / (60 * 60))
+                three_pay = three_pay + int((date_time_mid - date_time_start).days) * 24 + int(
+                    (date_time_mid - date_time_start).seconds / (60 * 60))
         if multiple_wages_dict.get(date_time_end.date().strftime("%Y-%m-%d")) is not None:
             if multiple_wages_dict[date_time_end.date().strftime("%Y-%m-%d")] == 2:
-                double_pay = double_pay + int((date_time_end - date_time_mid).seconds / (60 * 60))
+                double_pay = double_pay + int((date_time_end - date_time_mid).days) * 24 + int(
+                    (date_time_end - date_time_mid).seconds / (60 * 60))
             elif multiple_wages_dict[date_time_end.date().strftime("%Y-%m-%d")] == 3:
-                three_pay = three_pay + int((date_time_end - date_time_mid).seconds / (60 * 60))
+                three_pay = three_pay + int((date_time_end - date_time_mid).days) * 24 + int(
+                    (date_time_end - date_time_mid).seconds / (60 * 60))
     else:
         if multiple_wages_dict.get(date_time_start.date().strftime("%Y-%m-%d")) is not None:
             if multiple_wages_dict[date_time_start.date().strftime("%Y-%m-%d")] == 2:
-                double_pay = double_pay + int((date_time_end - date_time_start).seconds / (60 * 60))
+                double_pay = double_pay + int((date_time_end - date_time_start).days) * 24 + int(
+                    (date_time_end - date_time_start).seconds / (60 * 60))
             elif multiple_wages_dict[date_time_start.date().strftime("%Y-%m-%d")] == 3:
-                three_pay = three_pay + int((date_time_end - date_time_start).seconds / (60 * 60))
-    return double_pay, three_pay
+                three_pay = three_pay + int((date_time_end - date_time_start).days) * 24 + int(
+                    (date_time_end - date_time_start).seconds / (60 * 60))
+    return night_shift_num, double_pay, three_pay

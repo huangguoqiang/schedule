@@ -14,19 +14,19 @@ class ScheduleSerializer(serializers.ModelSerializer):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'description', 'is_delete')
 
 
 class ShiftSerializer(serializers.ModelSerializer):
     class Meta:
         model = Shift
-        fields = ('id', 'name', 'team_id', 'time_start', 'time_end', 'order')
+        fields = ('id', 'name', 'team_id', 'time_start', 'time_end', 'order', 'is_delete')
 
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Person
-        fields = ('id', 'team_id', 'name', 'tel_num', 'email')
+        fields = ('id', 'team_id', 'name', 'tel_num', 'email', 'slack_id', 'is_delete')
 
 
 class MultipleWagesSerializer(serializers.ModelSerializer):

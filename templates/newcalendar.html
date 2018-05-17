@@ -73,27 +73,22 @@
 <!--<![endif]-->
 
 <div class="navbar">
-    <div class="navbar-inner">
-        <ul class="nav pull-right">
+    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <div class="pull-right">>
+        <li id="fat-menu" class="dropdown">
+            <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-user-md"></i> Jack Smith
+                <i class="icon-caret-down"></i>
+            </a>
 
-            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>
-            <li id="fat-menu" class="dropdown">
-                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-user"></i> Jack Smith
-                    <i class="icon-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a tabindex="-1" href="#">My Account</a></li>
-                    <li class="divider"></li>
-                    <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
-                    <li class="divider visible-phone"></li>
-                    <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
-                </ul>
-            </li>
-
-        </ul>
-        <a class="brand" href="../home"><span class="first"></span> <span class="second">21vianet</span></a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="#">My Account</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
+                <li class="divider visible-phone"></li>
+                <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+            </ul>
+        </li>
     </div>
 </div>
 
@@ -455,6 +450,7 @@
             {#editable: true,#}
             eventLimit: true, // allow "more" link when too many events
             selectable: true,
+            themeSystem: 'bootstrap3',
             select: function (start, end, jsEvent, view) { //点击空白区域/选择区域内容触发
                 console.log("↓↓↓select↓↓↓");
                 var newstart = start.format("YYYY-MM-DD");
@@ -496,7 +492,13 @@
                 $("#myModalLabel").text("更新");
                 $("#btn_delete").show();
                 $('#myModal').modal();
-            }
+            },
+            eventMouseover: function (calEvent, jsEvent, view) {//鼠标在日程区块上时触发
+                $(this).css('cursor', 'pointer');
+            },
+            eventMouseout: function (calEvent, jsEvent, view) {//鼠标从日程区块离开时触发
+                $(this).css('cursor-color', '');
+            },
         });
 
         function pushEvents(title, person_id, shift_id, is_master, order) {

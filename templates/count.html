@@ -80,27 +80,22 @@
 <body class="">
 <!--<![endif]-->
 <div class="navbar">
-    <div class="navbar-inner">
-        <ul class="nav pull-right">
+    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <div class="pull-right">>
+        <li id="fat-menu" class="dropdown">
+            <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="icon-user-md"></i> Jack Smith
+                <i class="icon-caret-down"></i>
+            </a>
 
-            <li><a href="#" class="hidden-phone visible-tablet visible-desktop" role="button">Settings</a></li>
-            <li id="fat-menu" class="dropdown">
-                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
-                    <i class="icon-user"></i> Jack Smith
-                    <i class="icon-caret-down"></i>
-                </a>
-
-                <ul class="dropdown-menu">
-                    <li><a tabindex="-1" href="#">My Account</a></li>
-                    <li class="divider"></li>
-                    <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
-                    <li class="divider visible-phone"></li>
-                    <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
-                </ul>
-            </li>
-
-        </ul>
-        <a class="brand" href="../home"><span class="first"></span> <span class="second">21vianet</span></a>
+            <ul class="dropdown-menu">
+                <li><a tabindex="-1" href="#">My Account</a></li>
+                <li class="divider"></li>
+                <li><a tabindex="-1" class="visible-phone" href="#">Settings</a></li>
+                <li class="divider visible-phone"></li>
+                <li><a tabindex="-1" href="sign-in.html">Logout</a></li>
+            </ul>
+        </li>
     </div>
 </div>
 
@@ -163,8 +158,6 @@
                     <tr>
                         <th>#</th>
                         <th>姓名</th>
-                        <th>班次</th>
-                        <th>数量</th>
                         <th>班次</th>
                         <th>数量</th>
                         <th>双薪(h)</th>
@@ -248,10 +241,10 @@
                 var i = 1;
                 $.each(data, function (index, value) {
                     tbBody += "<tr class='tb_content'><td>" + i + "</td><td>" + value[0] + "</td>";
-                    for (var key in value[1]) {
-                        tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
-                    }
-
+                    //for (var key in value[1]) {
+                    //    tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
+                    //}
+                    tbBody += "<td>" + "Night" + "</td><td>" + value[1] + "</td>";
                     tbBody += "<td>" + value[2] + "</td><td>" + value[3] + "</td></tr>";
                     i++;
                 });
@@ -275,7 +268,6 @@
     $("#sel_team").change(function () {
         $(".tb_content").remove();
         getshift();
-        console.log($("#sel_team").val())
     });
     $("#btn_submit").click(function () {
         $(".tb_content").remove();

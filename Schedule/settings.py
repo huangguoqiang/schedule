@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'schedule',
         'USER': 'root',
-        'PASSWORD': 'qwer1234',
+        'PASSWORD': 'q1992516',
         'HOST': 'localhost',
         'PORT': '3306',
     }
