@@ -71,7 +71,7 @@ def export_excel(request):
     queryset_list = []
     shift_set = Shift.objects.all()
     person_set = Person.objects.all()
-    team_set = Team.objects.all()
+    team_set = Team.objects.filter(is_delete=False).all()
 
     for obj in shift_set:
         shift_dict[obj.id] = obj
@@ -94,7 +94,7 @@ def export_excel(request):
     value_team = []
     shift_name_dict = {'Day': 'A', 'Night': 'B', 'All-Day': 'Duty'}
     for team_obj in team_set:
-        queryset = Person.objects.filter(team_id=team_obj.id).all()
+        queryset = Person.objects.filter(team_id=team_obj.id, is_delete=False).all()
         if team_obj.name == 'Leaders':
             team_name = team_obj.name
         else:
@@ -223,21 +223,23 @@ def get_schedule_count(request):
 
     for obj in schedule_set:
         if person_count_dict.get(obj.person_id) is None:
-            person = person_dict[obj.person_id]
-            # shift_count_dict = {}
-            night_shift_num = 0
-            double_pay = 0
-            three_pay = 0
-            # for k, v in shift_dict.items():
-            #     shift_count_dict[v.name] = 0
-            one_shift = shift_dict.get(obj.shift_id)
-            # 统计白夜班
-            # shift_count_dict[one_shift.name] = shift_count_dict[one_shift.name] + 1
-            # 统计双薪，三薪
-            night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
-                                                                              night_shift_num, double_pay, three_pay)
-            person_list = [person.name, night_shift_num, double_pay, three_pay]
-            person_count_dict[obj.person_id] = person_list
+            if person_dict.get(obj.person_id) is not None:
+                person = person_dict[obj.person_id]
+                # shift_count_dict = {}
+                night_shift_num = 0
+                double_pay = 0
+                three_pay = 0
+                # for k, v in shift_dict.items():
+                #     shift_count_dict[v.name] = 0
+                one_shift = shift_dict.get(obj.shift_id)
+                # 统计白夜班
+                # shift_count_dict[one_shift.name] = shift_count_dict[one_shift.name] + 1
+                # 统计双薪，三薪
+                night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
+                                                                                  night_shift_num, double_pay,
+                                                                                  three_pay)
+                person_list = [person.name, night_shift_num, double_pay, three_pay]
+                person_count_dict[obj.person_id] = person_list
         else:
             one_shift = shift_dict.get(obj.shift_id)
             # 统计白夜班
@@ -250,19 +252,21 @@ def get_schedule_count(request):
     # 统计每月最后一天到每月1号那个班次的三薪
     for obj in schedule_before_set:
         if person_count_dict.get(obj.person_id) is None:
-            person = person_dict[obj.person_id]
-            # shift_count_dict = {}
-            night_shift_num = 0
-            double_pay = 0
-            three_pay = 0
-            # for k, v in shift_dict.items():
-            #     shift_count_dict[v.name] = 0
-            one_shift = shift_dict.get(obj.shift_id)
-            # 统计双薪，三薪
-            night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
-                                                                              night_shift_num, double_pay, three_pay)
-            person_list = [person.name, 0, double_pay, three_pay]
-            person_count_dict[obj.person_id] = person_list
+            if person_dict.get(obj.person_id) is not None:
+                person = person_dict[obj.person_id]
+                # shift_count_dict = {}
+                night_shift_num = 0
+                double_pay = 0
+                three_pay = 0
+                # for k, v in shift_dict.items():
+                #     shift_count_dict[v.name] = 0
+                one_shift = shift_dict.get(obj.shift_id)
+                # 统计双薪，三薪
+                night_shift_num, double_pay, three_pay = calculate_multiple_wages(one_shift, obj, multiple_wages_dict,
+                                                                                  night_shift_num, double_pay,
+                                                                                  three_pay)
+                person_list = [person.name, 0, double_pay, three_pay]
+                person_count_dict[obj.person_id] = person_list
         else:
             one_shift = shift_dict.get(obj.shift_id)
             night_shift_num = 0
@@ -331,7 +335,7 @@ def auto_generate(request):
 # 每天检测排班（通过crontab调用api）是否够三个月，不够自动生成
 @csrf_exempt
 def auto_generate_everyday(request):
-    queryset_team = Team.objects.all()
+    queryset_team = Team.objects.filter(is_delete=False).all()
     for is_public in [True, False]:
         for obj_team in queryset_team:
             lastest_obj = Schedule.objects.filter(team_id=obj_team.id, is_base=False, is_public=is_public).order_by(

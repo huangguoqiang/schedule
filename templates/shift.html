@@ -227,7 +227,7 @@
                     if (time_start == time_end) {
                         time_end = time_end + 'N'
                     }
-                    tbBody += "<tr class='tb_content'><td>" + (index + 1) + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
+                    tbBody += "<tr class='tb_content' height='50px'><td>" + (index + 1) + "</td>" + "<td>" + $("#sel_teamname option[value='" + value.team_id + "']").text() +
                         "</td>" + "<td>" + value.name + "</td>" + "<td>" + time_start + "~" + time_end + "</td><td>" +
                         '<a onclick= update(' + value.id + ') role="button"><i class="icon-pencil"></i></a>' +
                         "</td><td>" + '<a onclick = deleteshift(' + value.id + ') role="button" data-toggle="modal">' +

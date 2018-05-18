@@ -151,16 +151,19 @@
     <ul class="breadcrumb">
         <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li class="active">值班组管理</li>
+
+        <div class="pull-right" style="margin-top:-7px;">
+            <li>
+                <button class="btn btn-primary" onclick="add()"><i class="icon-plus"></i> New Team</button>
+                <div class="btn-group">
+                </div>
+            </li>
+        </div>
+
     </ul>
 
     <div class="container-fluid">
         <div class="row-fluid">
-
-            <div class="btn-toolbar">
-                <button class="btn btn-primary" onclick="add()"><i class="icon-plus"></i> New Team</button>
-                <div class="btn-group">
-                </div>
-            </div>
             <div class="well">
                 <table class="table" id="myTb" border="1">
                     <thead>
@@ -217,7 +220,7 @@
             success: function (data) {
                 var tbBody = ""
                 $.each(data.results, function (index, value) {
-                    tbBody += "<tr class='tb_content'><td>" + (index + 1) + "</td>" + "<td>" + value.name + "</td>" +
+                    tbBody += "<tr class='tb_content' height='50px'><td>" + (index + 1) + "</td>" + "<td>" + value.name + "</td>" +
                         "<td>" + value.description + "</td><td>" + '<a onclick= update(' + value.id + ') role="button">' +
                         '<i class="icon-pencil"></i></a>' + "</td><td>" + '<a onclick = deleteteam(' + value.id +
                         ') role="button" data-toggle="modal"><i class="icon-remove"></i></a>' +
@@ -259,7 +262,7 @@
     };
 
     function deleteteam(id) {
-        var con = confirm("删除值班组也会删除与值班组有关的部分数据（例如：班次，值班人员，今天之后的排班信息），请确定是否删除：");
+        var con = confirm("删除值班组也会删除与值班组有关的部分数据（例如：班次，值班人员，排班信息），请确定是否删除：");
         if (con == true) {
             $.ajax({
                 url: '../api/team/' + id,

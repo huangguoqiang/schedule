@@ -187,7 +187,7 @@
             url: '../api/team/',
             type: "GET",
             dataType: 'json',
-            data: {},
+            data: {is_delete: false},
             success: function (data) {
                 var ddl = $("#sel_team");
                 //删除节点
@@ -207,7 +207,7 @@
                     ddl.append(opt);
                 });
                 $("#sel_team option:first").prop("selected", 'selected');
-                getshift();
+                get_count();
 
             },
             complete: function () {
@@ -226,7 +226,7 @@
     }
 
 
-    function getshift() {
+    function get_count() {
         $.ajax({
             url: '../get_schedule_count/',
             type: "Post",
@@ -240,7 +240,7 @@
                 var tbBody = "";
                 var i = 1;
                 $.each(data, function (index, value) {
-                    tbBody += "<tr class='tb_content'><td>" + i + "</td><td>" + value[0] + "</td>";
+                    tbBody += "<tr class='tb_content' height='50px'><td>" + i + "</td><td>" + value[0] + "</td>";
                     //for (var key in value[1]) {
                     //    tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
                     //}
@@ -267,11 +267,11 @@
 
     $("#sel_team").change(function () {
         $(".tb_content").remove();
-        getshift();
+        get_count();
     });
     $("#btn_submit").click(function () {
         $(".tb_content").remove();
-        getshift();
+        get_count();
     });
     // initialize input widgets first
     $('#basicExample .date').datepicker({

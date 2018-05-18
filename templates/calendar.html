@@ -256,6 +256,7 @@
 <script type="text/javascript">
     var shift_dict = new Array();
     var person_dict = new Array();
+    var team_dict = new Array();
 
     function startTeam() {
         $.ajax({
@@ -352,6 +353,36 @@
 
             }
         });
+        $.ajax({
+            url: '../api/shift/',
+            type: "GET",
+            dataType: 'json',
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
+            success: function (data) {
+                //转成Json对象
+                var result = eval(data.results);
+
+                $(result).each(function (key) {
+                    var time_start = moment(result[key].time_start, "HH:mm:ss").format("HH:mm");
+                    var time_end = moment(result[key].time_end, "HH:mm:ss").format("HH:mm");
+                    if (time_start == time_end) {
+                        time_end = time_end + 'N'
+                    }
+                    shift_dict[result[key].id] = [result[key].name, time_start, time_end]
+                });
+
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
     }
 
     function RemoveOption1() {
@@ -382,6 +413,30 @@
                 $(result).each(function (key) {
                     opt = "<option value='" + result[key].id + "'>" + result[key].name + "</option>";
                     ddl1.append(opt);
+                    person_dict[result[key].id] = result[key].name;
+                });
+            },
+            complete: function () {
+
+
+            },
+            error: function () {
+
+
+            }
+        });
+        $.ajax({
+            url: '../api/person/',
+            type: "GET",
+            dataType: 'json',
+            data: {
+                team_id: $("#sel_teamname").val(),
+            },
+            success: function (data) {
+                //转成Json对象
+                var result = eval(data.results);
+                //循环遍历 下拉框绑定
+                $(result).each(function (key) {
                     person_dict[result[key].id] = result[key].name;
                 });
             },

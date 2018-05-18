@@ -131,17 +131,17 @@
     <ul class="breadcrumb">
         <li><a href="../home/">Home</a> <span class="divider">/</span></li>
         <li class="active">生成排班</li>
+        <li class="pull-right">
+            <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 生成排班</button>
+            <div class="btn-group">
+            </div>
+        </li>
         <select class="form-control s_center" id="sel_teamname" name="sel_teamname">
         </select>
     </ul>
 
     <div class="container-fluid">
         <div id='wrap'>
-            <div class="btn-toolbar">
-                <button class="btn btn-primary" onclick="generate()"><i class="icon-plus"></i> 生成排班</button>
-                <div class="btn-group">
-                </div>
-            </div>
             <div id='calendar'></div>
 
             <div style='clear:both'></div>
@@ -209,7 +209,7 @@
             type: "GET",
             dataType: 'json',
             async: false,
-            data: {},
+            data: {is_delete: false},
             success: function (data) {
                 var ddl = $("#sel_teamname");
                 //删除节点
@@ -257,6 +257,7 @@
             dataType: 'json',
             data: {
                 team_id: $("#sel_teamname").val(),
+                is_delete: false
             },
             success: function (data) {
                 var ddl = $("#sel_shiftname1");
@@ -312,6 +313,7 @@
             dataType: 'json',
             data: {
                 team_id: $("#sel_teamname").val(),
+                is_delete: false,
             },
             success: function (data) {
                 var ddl1 = $("#sel_MPname1");
