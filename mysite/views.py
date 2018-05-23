@@ -9,7 +9,7 @@ from django.shortcuts import render, render_to_response
 from django.views.decorators.csrf import csrf_exempt
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.decorators import list_route
 from mysite.serializers import *
 from rest_framework import status
@@ -290,6 +290,7 @@ def get_schedule_today(request):
         person = Person.objects.filter(id=obj.person_id).first()
         one_shift = Shift.objects.filter(id=obj.shift_id).first()
         my_dict['date'] = today
+        my_dict['slack_id'] = person.slack_id
         my_dict['person_name'] = person.name
         my_dict['shift_name'] = one_shift.name
         my_dict['time_start'] = one_shift.time_start.strftime("%H:%M")
@@ -478,8 +479,9 @@ class ShiftViewSet(viewsets.ModelViewSet):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all().order_by('id')
     serializer_class = PersonSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filter_fields = ('id', 'team_id', 'name', 'email', 'slack_id', 'is_delete')
+    search_fields = {'name', 'email', }
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

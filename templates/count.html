@@ -80,7 +80,7 @@
 <body class="">
 <!--<![endif]-->
 <div class="navbar">
-    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <a class="brand" href="../home/"><span class="first">21vianet</span> <span class="second"></span></a>
     <div class="pull-right">>
         <li id="fat-menu" class="dropdown">
             <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
@@ -101,20 +101,37 @@
 
 
 <div class="sidebar-nav">
-    <form class="search form-inline">
-        <input type="text" placeholder="Search...">
-    </form>
-
     <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
     <ul id="dashboard-menu" class="nav nav-list collapse in">
-        <li><a href="../home">排班表</a></li>
-        <li><a href="../users">值班人员管理</a></li>
-        <li><a href="../shift">班次管理</a></li>
-        <li><a href="../team">值班组管理</a></li>
-        <li><a href="../calendar">生成排班表</a></li>
-        <li><a href="../multiple_wages">添加多薪日期</a></li>
-        <li><a href="../count">排班统计</a></li>
-
+        <li><a href="../home/">排班表</a></li>
+        <li><a href="../calendar/">生成排班表</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                用户管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../team/">值班组管理</a></li>
+                <li><a href="../shift/">班次管理</a></li>
+                <li><a href="../users/">值班人员管理</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                节假日/夜班管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../multiple_wages/">添加多薪日期</a></li>
+                <li><a href="../count/">排班统计</a></li>
+            </ul>
+        </li>
     </ul>
 
     <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>Account<span
@@ -168,13 +185,7 @@
                 </table>
             </div>
             <div>
-                <ul class="pagination">
-                    <li><a href="#">Prev</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">Next</a></li>
+                <ul class="pagination" id="myPage">
                 </ul>
             </div>
         </div>
@@ -182,6 +193,9 @@
 </div>
 
 <script type="text/javascript">
+    var count_list = [];
+    var limit = 20;  //每页显示多少条数据
+
     function startTeam() {
         $.ajax({
             url: '../api/team/',
@@ -227,6 +241,7 @@
 
 
     function get_count() {
+        count_list = [];
         $.ajax({
             url: '../get_schedule_count/',
             type: "Post",
@@ -237,20 +252,57 @@
                 date_to: $("#date_end").val(),
             },
             success: function (data) {
-                var tbBody = "";
-                var i = 1;
                 $.each(data, function (index, value) {
-                    tbBody += "<tr class='tb_content' height='50px'><td>" + i + "</td><td>" + value[0] + "</td>";
-                    //for (var key in value[1]) {
-                    //    tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
-                    //}
-                    tbBody += "<td>" + "Night" + "</td><td>" + value[1] + "</td>";
-                    tbBody += "<td>" + value[2] + "</td><td>" + value[3] + "</td></tr>";
-                    i++;
+                    count_list.push(value);
                 });
-                $("#myTb").append(tbBody);
+                show_by_page(0);
             }
         });
+    }
+
+    function show_by_page(offset) {
+        $(".tb_content").remove();
+        $(".page_content").remove();
+        var pageBoby = "";
+        var one_count_page = [];
+        if (offset != 0) {
+            pageBoby += "<li class='page_content'><a href='#' onclick='show_by_page(" + (offset - limit) + ")'>Prev</a></li>";
+        } else {
+            pageBoby += "<li class='page_content disabled'><a href='#'>Prev</a></li>";
+        }
+        var pageSum = Math.ceil(count_list.length / limit);
+        if (pageSum == 0) {
+            pageBoby += "<li class='page_content disabled'><a href='#'>1</a></li>";
+        }
+        for (var i = 0; i < pageSum; i++) {
+            var offset_page = i * limit;
+            if (offset_page == offset) {
+                pageBoby += "<li class='page_content active'><a href='#'>" + (i + 1) + "</a></li>";
+            } else {
+                pageBoby += "<li class='page_content'><a href='#' onclick='show_by_page(" + (i * limit) + ")'>" +
+                    (i + 1) + "</a></li>";
+            }
+        }
+        if (offset + limit < count_list.length) {
+            pageBoby += "<li class='page_content'><a href='#' onclick='show_by_page(" + (offset + limit) + ")'>Next</a></li>"
+            one_count_page = count_list.slice(offset, offset + limit);
+        } else {
+            pageBoby += "<li class='page_content disabled'><a href='#'>Next</a></li>";
+            one_count_page = count_list.slice(offset);
+        }
+        $("#myPage").append(pageBoby);
+
+        var tbBody = "";
+        for (var i = 0; i < one_count_page.length; i++) {
+            tbBody += "<tr class='tb_content' height='50px'><td>" + (i + 1) + "</td><td>" + one_count_page[i][0] + "</td>";
+            //for (var key in value[1]) {
+            //    tbBody += "<td>" + key + "</td><td>" + value[1][key] + "</td>";
+            //}
+            tbBody += "<td>" + "Night" + "</td><td>" + one_count_page[i][1] + "</td>";
+            tbBody += "<td>" + one_count_page[i][2] + "</td><td>" + one_count_page[i][3] + "</td></tr>";
+        }
+        $("#myTb").append(tbBody);
+
     }
 
     $(function () {
@@ -266,11 +318,9 @@
     });
 
     $("#sel_team").change(function () {
-        $(".tb_content").remove();
         get_count();
     });
     $("#btn_submit").click(function () {
-        $(".tb_content").remove();
         get_count();
     });
     // initialize input widgets first

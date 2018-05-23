@@ -115,7 +115,7 @@
     </div>
 </div>
 <div class="navbar">
-    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <a class="brand" href="../home/"><span class="first">21vianet</span> <span class="second"></span></a>
     <div class="pull-right">>
         <li id="fat-menu" class="dropdown">
             <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
@@ -136,20 +136,37 @@
 
 
 <div class="sidebar-nav">
-    <form class="search form-inline">
-        <input type="text" placeholder="Search...">
-    </form>
-
     <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
     <ul id="dashboard-menu" class="nav nav-list collapse in">
-        <li><a href="../home">排班表</a></li>
-        <li><a href="../users">值班人员管理</a></li>
-        <li><a href="../shift">班次管理</a></li>
-        <li><a href="../team">值班组管理</a></li>
-        <li><a href="../calendar">生成排班表</a></li>
-        <li><a href="../multiple_wages">添加多薪日期</a></li>
-        <li><a href="../count">排班统计</a></li>
-
+        <li><a href="../home/">排班表</a></li>
+        <li><a href="../calendar/">生成排班表</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                用户管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../team/">值班组管理</a></li>
+                <li><a href="../shift/">班次管理</a></li>
+                <li><a href="../users/">值班人员管理</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                节假日/夜班管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../multiple_wages/">添加多薪日期</a></li>
+                <li><a href="../count/">排班统计</a></li>
+            </ul>
+        </li>
     </ul>
 
     <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>Account<span
@@ -165,7 +182,14 @@
 <div class="content">
 
     <div class="header">
-
+        <div class="pull-right">
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group">
+                    <input type="text" id="search" class="form-control" placeholder="Search">
+                </div>
+                <button type="button" onclick="getbyteamid(0)" class="btn btn-default">提交</button>
+            </form>
+        </div>
         <h1 class="page-title">值班人员管理</h1>
     </div>
 
@@ -201,13 +225,7 @@
                 </table>
             </div>
             <div>
-                <ul class="pagination">
-                    <li><a href="#">Prev</a></li>
-                    <li><a href="#">1</a></li>
-                    <li><a href="#">2</a></li>
-                    <li><a href="#">3</a></li>
-                    <li><a href="#">4</a></li>
-                    <li><a href="#">Next</a></li>
+                <ul class="pagination" id="myPage">
                 </ul>
             </div>
 
@@ -233,15 +251,29 @@
 </div>
 <script type="text/javascript">
     var person = '';
+    var env_offset = 0;
+    var last_offset = 0;
 
-    function getbyteamid() {
+    function getbyteamid(offset) {
+        $(".tb_content").remove();
+        $(".page_content").remove();
+        env_offset = offset;
+        var limit = 20;
+        var search = $("#search").val();
+        var team_id = '';
+        if (search == '') {
+            team_id = $("#sel_team").val();
+        }
         $.ajax({
             url: '../api/person/',
             type: "GET",
             dataType: 'json',
             data: {
-                team_id: $("#sel_team").val(),
-                is_delete: false
+                team_id: team_id,
+                is_delete: false,
+                limit: limit,
+                offset: offset,
+                search: search
             },
             success: function (data) { // 获取当前月的数据
                 var tbBody = ""
@@ -256,6 +288,35 @@
 
                 });
                 $("#myTb").append(tbBody);
+
+                var pageBoby = "";
+                if (offset != 0) {
+                    pageBoby += "<li class='page_content'><a href='#' onclick='getbyteamid(" + (offset - limit) + ")'>Prev</a></li>";
+                } else {
+                    pageBoby += "<li class='page_content disabled'><a href='#'>Prev</a></li>";
+                }
+                var pageSum = Math.ceil(data.count / limit);
+                if (pageSum == 0) {
+                    pageBoby += "<li class='page_content disabled'><a href='#'>1</a></li>";
+                } else {
+                    last_offset = (pageSum - 1) * limit;
+                }
+                for (var i = 0; i < pageSum; i++) {
+                    var offset_page = i * limit;
+                    if (offset_page == offset) {
+                        pageBoby += "<li class='page_content active'><a href='#'>" + (i + 1) + "</a></li>";
+                    } else {
+                        pageBoby += "<li class='page_content'><a href='#' onclick='show_by_page(" + (i * limit) + ")'>" +
+                            (i + 1) + "</a></li>";
+                    }
+                }
+                if (offset + limit < data.count) {
+                    pageBoby += "<li class='page_content'><a href='#' onclick='getbyteamid(" + (offset + limit) + ")'>Next</a></li>"
+                } else {
+                    pageBoby += "<li class='page_content disabled'><a href='#'>Next</a></li>";
+                }
+                $("#myPage").append(pageBoby);
+                $("#search").val('');
             }
         });
     }
@@ -296,18 +357,18 @@
 
     };
 
+
     function deleteuser(id) {
         var con = confirm("注意：删除值班人同时也会删除该值班人今天之后的排班信息，请确认是否要删除值班人：");
         if (con == true) {
             $.ajax({
-                url: '../api/person/' + id,
+                url: '../api/person/' + id + '/',
                 type: "delete",
                 dataType: 'json',
                 data: {},
                 success: function (result) {
                     alert("删除成功");
-                    $(".tb_content").remove();
-                    getbyteamid();
+                    getbyteamid(0);
                 }
             });
         }
@@ -344,8 +405,7 @@
                                 success: function (result) {
                                     if (result) {
                                         alert("添加成功");
-                                        $(".tb_content").remove();
-                                        getbyteamid();
+                                        getbyteamid(0);
                                     } else {
                                         alert("添加失败，请重试");
                                         $('#myModal').modal("show");
@@ -394,8 +454,7 @@
                                             $("#txt_telnum").val('');
                                             $("#txt_email").val('');
                                             $("#txt_slack_id").val('');
-                                            $(".tb_content").remove();
-                                            getbyteamid();
+                                            getbyteamid(env_offset);
                                         } else {
                                             alert("更新失败，请重试");
                                             $('#myModal').modal("show");
@@ -430,7 +489,7 @@
                                     $("#txt_email").val('');
                                     $("#txt_slack_id").val('');
                                     $(".tb_content").remove();
-                                    getbyteamid();
+                                    getbyteamid(env_offset);
                                 } else {
                                     alert("更新失败，请重试");
                                     $('#myModal').modal("show");
@@ -479,7 +538,7 @@
 
                 });
                 $("#sel_team option:first").prop("selected", 'selected');
-                getbyteamid();
+                getbyteamid(0);
             },
             complete: function () {
 
@@ -493,8 +552,7 @@
     }
 
     $("#sel_team").change(function () {
-        $(".tb_content").remove();
-        getbyteamid();
+        getbyteamid(0);
     });
 
     $("#sel_teamname").change(function () {

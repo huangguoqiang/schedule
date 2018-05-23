@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'schedule',
         'USER': 'root',
-        'PASSWORD': 'q1992516',
+        'PASSWORD': 'qwer1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -122,7 +122,7 @@ USE_TZ = False
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 200,
 }
 

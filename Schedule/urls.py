@@ -34,7 +34,7 @@ urlpatterns = [
     url(r'^generate/', generate),
     url(r'^get_health/', get_health),
     url(r'^export_excel/', export_excel),
-    url(r'^get_schedule_today', get_schedule_today),
-    url(r'^get_schedule_count', get_schedule_count),
+    url(r'^get_schedule_today/', get_schedule_today),
+    url(r'^get_schedule_count/', get_schedule_count),
     url(r'^multiple_wages/', multiple_wages),
 ]

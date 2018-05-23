@@ -73,7 +73,7 @@
 <!--<![endif]-->
 
 <div class="navbar">
-    <a class="brand" href="../home"><span class="first">21vianet</span> <span class="second"></span></a>
+    <a class="brand" href="../home/"><span class="first">21vianet</span> <span class="second"></span></a>
     <div class="pull-right">>
         <li id="fat-menu" class="dropdown">
             <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
@@ -95,20 +95,37 @@
 
 <div class="copyrights">Collect from <a href="http://www.cssmoban.com/" title="网站模板">网站模板</a></div>
 <div class="sidebar-nav">
-    <form class="search form-inline">
-        <input type="text" placeholder="Search...">
-    </form>
-
     <a href="#dashboard-menu" class="nav-header" data-toggle="collapse"><i class="icon-dashboard"></i>Dashboard</a>
     <ul id="dashboard-menu" class="nav nav-list collapse in">
-        <li><a href="../home">排班表</a></li>
-        <li><a href="../users">值班人员管理</a></li>
-        <li><a href="../shift">班次管理</a></li>
-        <li><a href="../team">值班组管理</a></li>
-        <li><a href="../calendar">生成排班表</a></li>
-        <li><a href="../multiple_wages">添加多薪日期</a></li>
-        <li><a href="../count">排班统计</a></li>
-
+        <li><a href="../home/">排班表</a></li>
+        <li><a href="../calendar/">生成排班表</a></li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                用户管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../team/">值班组管理</a></li>
+                <li><a href="../shift/">班次管理</a></li>
+                <li><a href="../users/">值班人员管理</a></li>
+            </ul>
+        </li>
+        <li class="dropdown">
+            <a class="dropdown-toggle"
+               data-toggle="dropdown"
+               href="#">
+                节假日/夜班管理
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <!-- links -->
+                <li><a href="../multiple_wages/">添加多薪日期</a></li>
+                <li><a href="../count/">排班统计</a></li>
+            </ul>
+        </li>
     </ul>
 
     <a href="#accounts-menu" class="nav-header" data-toggle="collapse"><i class="icon-briefcase"></i>Account<span
@@ -125,7 +142,9 @@
 <div class="content">
 
     <div class="header">
-        <h1 class="page-title">生成排班</h1>
+        <h1 class="page-title" style='display:inline-block'>生成排班</h1>
+        <h3 style='display:inline-block'><a href="#" data-toggle="tooltip" data-placement="bottom" title="">tips</a>
+        </h3>
     </div>
 
     <ul class="breadcrumb">
@@ -685,6 +704,17 @@
         });
 
     }
+
+    $(function () {
+        var title = "<h3><li>1.点击下拉列表选择想要生成排班的team</li>" +
+            "<li>2.点击日历添加排班信息</li><li>3.添加完成日期连续的一轮排班</li>" +
+            "<li>4.点击右上方“生成排班”按钮</li></h3>"
+        options = {
+            title: title,
+            html: true,
+        };
+        $("[data-toggle='tooltip']").tooltip(options);
+    });
 </script>
 </body>
 </html>
